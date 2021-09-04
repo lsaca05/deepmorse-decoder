@@ -30,7 +30,7 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import datetime
 
-
+tf.compat.v1.disable_eager_execution()
 
 class Config():
 
@@ -331,10 +331,13 @@ def morse(text, file_name=None, SNR_dB=20, f_code=600, Fs=8000, code_speed=20, l
     dit = 1.2/code_speed
     # calculate the length of text in dit units
     txt_dits = MorseCode(text).len
-
     # calculate total text length in seconds
     tot_len = txt_dits * dit
-    assert length_seconds - tot_len > 0
+
+    # assert length_seconds - tot_len > 0
+    if length_seconds - tot_len < 0:
+        print(text + str(" too long. Will not be generated."))
+        return np.zeros([1,1])
 
     # calculate how many dits will fit in the 
     pad_dits = int((length_seconds - tot_len)/dit)
@@ -521,6 +524,8 @@ import re
 def generate_dataset(config):
     "generate audio dataset from a dictionary of random words"
     URL = "https://svnweb.freebsd.org/csrg/share/dict/words?view=co&content-type=text/plain"
+    # Header needed as part of request, website blocks script/non-browser requests it seems
+    hdr = {'User-Agent' : 'Mozilla/5.0'}
     filePath    = config.value('model.name')
     fnTrain     = config.value('morse.fnTrain')
     fnAudio     = config.value('morse.fnAudio')
@@ -531,7 +536,7 @@ def generate_dataset(config):
     word_max_length = config.value('morse.word_max_length')
     words_in_sample = config.value('morse.words_in_sample')
     print("SNR_DB:{}".format(SNR_DB))
-    rv = requests.get(URL)
+    rv = requests.get(URL, headers=hdr)
     if rv.status_code == 200:
         try: 
             os.makedirs(filePath)
@@ -550,11 +555,22 @@ def generate_dataset(config):
                     continue
                 speed = random.sample(code_speed,1)
                 SNR = random.sample(SNR_DB,1)
-                audio_file = "{}SNR{}WPM{}-{}-{}.wav".format(fnAudio, SNR[0], speed[0], phrase, uuid.uuid4().hex)      
-                morse(phrase, audio_file, SNR[0], 600, 8000, speed[0], length_seconds, 8, False)
-                mf.write(audio_file+' '+phrase+'\n')
-                #print(audio_file, phrase)
-            print("completed {} files".format(count)) 
+                audio_file = "{}SNR{}WPM{}-{}-{}.wav".format(fnAudio, SNR[0], speed[0], phrase, uuid.uuid4().hex)
+                # print(morse(phrase, audio_file, SNR[0], 600, 8000, speed[0], length_seconds, 8, False))
+                # morse(phrase, audio_file, SNR[0], 600, 8000, speed[0], length_seconds, 8, False)
+                # mf.write(audio_file+' '+phrase+'\n')
+                if not morse(phrase, audio_file, SNR[0], 600, 8000, speed[0], length_seconds, 8, False).all():
+                    print(audio_file, phrase + str(" TOO LONG, didn't write"))
+                else:
+                    mf.write(audio_file+' '+phrase+'\n')
+                # print(audio_file, phrase)
+            print("completed {} files".format(count))
+    elif rv.status_code == 404:
+        print("ERROR: URL Page Not Found")
+        print("Random morse word generation failed.")
+    else:
+        print("ERROR: Request status code " + str(rv.status_code))
+        print("Random morse word generation failed.")
 
 
 
@@ -658,6 +674,7 @@ def create_image(filename, imgSize, dataAugmentation=False):
         # save to file 
         retval = cv2.imwrite(imgname,img)
         if not retval:
+            # going to see a lot of this -- tries to make image from existing image.
             print('Error in writing image:{} retval:{}'.format(imgname,retval))
 
     
@@ -729,6 +746,7 @@ class MorseDataset():
                 continue
             
             lineSplit = line.strip().split(' ')
+            # print(lineSplit)
             assert len(lineSplit) >= 2, "line is {}".format(line)
             
             # filenames: audio/*.wav
@@ -757,7 +775,7 @@ class MorseDataset():
         self.validationWords = [x.gtText for x in self.validationSamples]
 
         # number of randomly chosen samples per epoch for training 
-        self.numTrainSamplesPerEpoch = 25000 
+        self.numTrainSamplesPerEpoch = 50000
         
         # start with train set
         self.trainSet()
@@ -896,20 +914,20 @@ class Model:
         # basic cells which is used to build RNN
         numHidden = 256
    
-        cells = [tf.contrib.rnn.LSTMCell(num_units=numHidden, state_is_tuple=True) for _ in range(2)] # 2 layers
+        cells = [tf.compat.v1.nn.rnn_cell.LSTMCell(num_units=numHidden, state_is_tuple=True) for _ in range(2)] # 2 layers
 
         # stack basic cells
-        stacked = tf.contrib.rnn.MultiRNNCell(cells, state_is_tuple=True)
+        stacked = tf.compat.v1.nn.rnn_cell.MultiRNNCell(cells, state_is_tuple=True)
 
         # bidirectional RNN
         # BxTxF -> BxTx2H
-        ((fw, bw), _) = tf.nn.bidirectional_dynamic_rnn(cell_fw=stacked, cell_bw=stacked, inputs=rnnIn3d, dtype=rnnIn3d.dtype)
+        ((fw, bw), _) = tf.compat.v1.nn.bidirectional_dynamic_rnn(cell_fw=stacked, cell_bw=stacked, inputs=rnnIn3d, dtype=rnnIn3d.dtype)
                                     
         # BxTxH + BxTxH -> BxTx2H -> BxTx1X2H
         concat = tf.expand_dims(tf.concat([fw, bw], 2), 2)
                                     
         # project output to chars (including blank): BxTx1x2H -> BxTx1xC -> BxTxC
-        kernel = tf.Variable(tf.truncated_normal([1, 1, numHidden * 2, len(self.charList) + 1], stddev=0.1))
+        kernel = tf.Variable(tf.random.truncated_normal([1, 1, numHidden * 2, len(self.charList) + 1], stddev=0.1))
         self.rnnOut3d = tf.squeeze(tf.nn.atrous_conv2d(value=concat, filters=kernel, rate=1, padding='SAME'), axis=[2])
         
 
@@ -932,7 +950,7 @@ class Model:
         if self.decoderType == DecoderType.BestPath:
             self.decoder = tf.nn.ctc_greedy_decoder(inputs=self.ctcIn3dTBC, sequence_length=self.seqLen)
         elif self.decoderType == DecoderType.BeamSearch:
-            self.decoder = tf.nn.ctc_beam_search_decoder(inputs=self.ctcIn3dTBC, sequence_length=self.seqLen, beam_width=50, merge_repeated=False)
+            self.decoder = tf.compat.v1.nn.ctc_beam_search_decoder(inputs=self.ctcIn3dTBC, sequence_length=self.seqLen, beam_width=50, merge_repeated=False)
         elif self.decoderType == DecoderType.WordBeamSearch:
             # import compiled word beam search operation (see https://github.com/githubharald/CTCWordBeamSearch)
             print("Loading WordBeamSearch...")
@@ -1178,7 +1196,7 @@ def is_valid_file(parser, arg):
 class FilePaths:
     "filenames and paths to data"
     fnCharList = 'morseCharList.txt'
-    fnAccuracy = 'model/accuracy.txt'
+    fnAccuracy = 'model-arrl3/accuracy.txt'
     fnTrain = 'data/'
     fnInfer = 'audio/6db42dd27d414097b2f02c4ca7a800e9.wav'
     fnCorpus = "morseCorpus.txt"
@@ -1277,7 +1295,7 @@ def main():
 
     args = parser.parse_args()
 
-    config = Config('model_arrl.yaml') #read configs for current training/validation/inference job
+    config = Config('model_arrl3.yaml') #read configs for current training/validation/inference job
 
     decoderType = DecoderType.WordBeamSearch
     #decoderType = DecoderType.BeamSearch
