@@ -11,9 +11,9 @@ model:
     numTrainSamplesPerEpoch: 5000
 
 morse:
-    fnTrain:    "/Volumes/Elements/model-arrl3/morsewords.txt"
-    fnAudio:    "/Volumes/Elements/model-arrl3/"
-    count:      25000
+    fnTrain:    "Volumes/Elements/model-arrl3/morsewords.txt"
+    fnAudio:    "Volumes/Elements/model-arrl3/"
+    count:      50000
     SNR_dB:     
       - 40
       - 30
@@ -23,6 +23,8 @@ morse:
       - 3
       - -3
       - -6
+      # - -10
+      # - -20
     f_code:     600
     Fs:         8000
     code_speed: 
@@ -38,9 +40,9 @@ morse:
     words_in_sample: 1
 
 experiment:
-    modelDir:   "/Volumes/Elements/model-arrl3/"
-    fnAccuracy: "/Volumes/Elements/model-arrl3/accuracy.txt"
-    fnTrain:    "/Volumes/Elements/model-arrl3/morsewords.txt"
-    fnInfer:    "/Volumes/Elements/model-arrl3/test.png"
-    fnCorpus:   "/Volumes/Elements/model-arrl3/corpus.txt"
-    fnCharList: "/Volumes/Elements/model-arrl3/wordCharList.txt"
+    modelDir:   "Volumes/Elements/model-arrl3/"
+    fnAccuracy: "Volumes/Elements/model-arrl3/accuracy.txt"
+    fnTrain:    "Volumes/Elements/model-arrl3/morsewords.txt"
+    fnInfer:    "Volumes/Elements/model-arrl3/test.png"
+    fnCorpus:   "Volumes/Elements/model-arrl3/corpus.txt"
+    fnCharList: "Volumes/Elements/model-arrl3/wordCharList.txt"
