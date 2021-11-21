@@ -775,7 +775,7 @@ class MorseDataset():
         self.validationWords = [x.gtText for x in self.validationSamples]
 
         # number of randomly chosen samples per epoch for training 
-        self.numTrainSamplesPerEpoch = 50000
+        self.numTrainSamplesPerEpoch = 25000
         
         # start with train set
         self.trainSet()
@@ -853,7 +853,8 @@ class Model:
 
     def __init__(self, charList, config, decoderType=DecoderType.BestPath, mustRestore=False):
         "init model: add CNN, RNN and CTC and initialize TF"
-
+        global TF2
+        TF2 = True
         # model constants
         self.modelDir = config.value('model.name') 
         self.batchSize = config.value('model.batchSize')  # was 50 
@@ -867,7 +868,11 @@ class Model:
         self.snapID = 0
 
         # input image batch
-        self.inputImgs = tf.compat.v1.placeholder(tf.float32, shape=(None, self.imgSize[0], self.imgSize[1]))
+        if TF2 is True:
+        # New keras function always omits batch size. Shape is (None, 128, 32)
+            self.inputImgs = tf.keras.Input(dtype = tf.float32, shape = (self.imgSize[0], self.imgSize[1]))
+        else:
+            self.inputImgs = tf.compat.v1.placeholder(tf.float32, shape=(None, self.imgSize[0], self.imgSize[1]))
 
         # setup CNN, RNN and CTC
         self.setupCNN()
@@ -876,8 +881,15 @@ class Model:
 
         # setup optimizer to train NN
         self.batchesTrained = 0
-        self.learningRate = tf.compat.v1.placeholder(tf.float32, shape=[])
+        if TF2 is True:
+            self.learningRate = tf.squeeze(tf.keras.Input(dtype = tf.float32, shape = [], batch_size = 1))
+        else:
+            self.learningRate = tf.compat.v1.placeholder(tf.float32, shape=[])
+
+        # print(self.learningRate.shape)
+        # exit()
         self.optimizer = tf.compat.v1.train.RMSPropOptimizer(self.learningRate).minimize(self.loss)
+        # self.optimizer = tf.keras.optimizers.RMSprop(self.learningRate).minimize(self.loss, var_list = None)
 
         # initialize TF
 
@@ -913,19 +925,37 @@ class Model:
 
         # basic cells which is used to build RNN
         numHidden = 256
-   
-        cells = [tf.compat.v1.nn.rnn_cell.LSTMCell(num_units=numHidden, state_is_tuple=True) for _ in range(2)] # 2 layers
-
+        # train new to check TF2
+        if TF2 is True:
+            cells = [tf.keras.layers.LSTMCell(units=numHidden) for _ in range(2)] # 2 layers
+        else:
+            cells = [tf.compat.v1.nn.rnn_cell.LSTMCell(num_units=numHidden, state_is_tuple=True) for _ in range(2)] # 2 layers
         # stack basic cells
-        stacked = tf.compat.v1.nn.rnn_cell.MultiRNNCell(cells, state_is_tuple=True)
-
+        if TF2 is True:
+            stacked = tf.keras.layers.StackedRNNCells(cells)
+        else:
+            stacked = tf.compat.v1.nn.rnn_cell.MultiRNNCell(cells, state_is_tuple=True)
         # bidirectional RNN
         # BxTxF -> BxTx2H
+        # TODO -- Can't find equivalent line for TF 2
         ((fw, bw), _) = tf.compat.v1.nn.bidirectional_dynamic_rnn(cell_fw=stacked, cell_bw=stacked, inputs=rnnIn3d, dtype=rnnIn3d.dtype)
-                                    
+        # 
+        # ((fw,bw), _) = tf.keras.layers.Bidirectional(tf.keras.layers.RNN(stacked))
+        # no need for rnnin3d?
+        # ((fw,bw), _) = tf.keras.layers.Bidirectional(stacked)
+        # biStacked = tf.keras.layers.Bidirectional(stacked, merge_mode=None)
+        # biStacked = tf.keras.layers.Bidirectional(tf.keras.layers.RNN(stacked), merge_mode=None)
+        # print(biStacked)
+
         # BxTxH + BxTxH -> BxTx2H -> BxTx1X2H
+        # (None, 32, 1, 512)
         concat = tf.expand_dims(tf.concat([fw, bw], 2), 2)
-                                    
+        # concat = tf.expand_dims(tf.concat(biStacked, 2), 2)
+        # print(((fw, bw), _))
+        # print(fw)
+        # print(bw)
+        # print(concat)
+        # exit()
         # project output to chars (including blank): BxTx1x2H -> BxTx1xC -> BxTxC
         kernel = tf.Variable(tf.random.truncated_normal([1, 1, numHidden * 2, len(self.charList) + 1], stddev=0.1))
         self.rnnOut3d = tf.squeeze(tf.nn.atrous_conv2d(value=concat, filters=kernel, rate=1, padding='SAME'), axis=[2])
@@ -936,21 +966,44 @@ class Model:
         # BxTxC -> TxBxC
         self.ctcIn3dTBC = tf.transpose(self.rnnOut3d, [1, 0, 2])
         # ground truth text as sparse tensor
-        self.gtTexts = tf.SparseTensor(tf.compat.v1.placeholder(tf.int64, shape=[None, 2]) , tf.compat.v1.placeholder(tf.int32, [None]), tf.compat.v1.placeholder(tf.int64, [2]))
+        # SparseTensor(indices=Tensor("Placeholder:0", shape=(None, 2), dtype=int64), values=Tensor("Placeholder_1:0", shape=(None,), dtype=int32), dense_shape=Tensor("Placeholder_2:0", shape=(2,), dtype=int64))
+        # TODO - 3rd arg compat needs conversion
+        if TF2 is True:
+            self.gtTexts = tf.SparseTensor(tf.keras.Input(dtype = tf.int64, shape = [2]), tf.keras.Input(dtype = tf.int32, shape = []), tf.keras.Input(dtype=tf.int64, shape=[], batch_size=2))
+        else:
+            self.gtTexts = tf.SparseTensor(tf.compat.v1.placeholder(tf.int64, shape=[None, 2]) , tf.compat.v1.placeholder(tf.int32, [None]), tf.compat.v1.placeholder(tf.int64, [2]))
 
         # calc loss for batch
-        self.seqLen = tf.compat.v1.placeholder(tf.int32, [None])
+        if TF2 is True:
+            self.seqLen = tf.keras.Input(dtype = tf.int32, shape=[]) # Tensor("input_3:0", shape=(None,), dtype=int32)
+        else:
+            self.seqLen = tf.compat.v1.placeholder(tf.int32, [None]) # Tensor("Placeholder_2:0", shape=(None,), dtype=int32)
+
+        # sequence length becomes label length and logit length, label length is none if labels is SparseTensor
+        # if TF2 is True:
+            # self.loss = tf.reduce_mean(tf.nn.ctc_loss(labels=self.gtTexts, logits=self.ctcIn3dTBC, label_length=None, logit_length=self.seqLen, blank_index=???))
+        # else:
         self.loss = tf.reduce_mean(tf.compat.v1.nn.ctc_loss(labels=self.gtTexts, inputs=self.ctcIn3dTBC, sequence_length=self.seqLen, ctc_merge_repeated=True))
 
         # calc loss for each element to compute label probability
-        self.savedCtcInput = tf.compat.v1.placeholder(tf.float32, shape=[self.maxTextLen, None, len(self.charList) + 1])
+        if TF2 is True:
+            self.savedCtcInput = tf.keras.Input(dtype = tf.float32, shape=[None, len(self.charList) + 1], batch_size = self.maxTextLen)
+        else:
+            self.savedCtcInput = tf.compat.v1.placeholder(tf.float32, shape=[self.maxTextLen, None, len(self.charList) + 1])
+
+        # if TF2 is True:
+        #     self.lossPerElement = tf.nn.ctc_loss(labels=self.gtTexts, logits=self.savedCtcInput, label_length=None, logit_length=self.seqLen, blank_index=???)
+        # else:
         self.lossPerElement = tf.compat.v1.nn.ctc_loss(labels=self.gtTexts, inputs=self.savedCtcInput, sequence_length=self.seqLen, ctc_merge_repeated=True)
 
         # decoder: either best path decoding or beam search decoding
         if self.decoderType == DecoderType.BestPath:
             self.decoder = tf.nn.ctc_greedy_decoder(inputs=self.ctcIn3dTBC, sequence_length=self.seqLen)
         elif self.decoderType == DecoderType.BeamSearch:
-            self.decoder = tf.compat.v1.nn.ctc_beam_search_decoder(inputs=self.ctcIn3dTBC, sequence_length=self.seqLen, beam_width=50, merge_repeated=False)
+            if TF2 is True:
+                self.decoder = tf.nn.ctc_beam_search_decoder(inputs=self.ctcIn3dTBC, sequence_length=self.seqLen, beam_width=50)
+            else:
+                self.decoder = tf.compat.v1.nn.ctc_beam_search_decoder(inputs=self.ctcIn3dTBC, sequence_length=self.seqLen, beam_width=50, merge_repeated=False)
         elif self.decoderType == DecoderType.WordBeamSearch:
             # import compiled word beam search operation (see https://github.com/githubharald/CTCWordBeamSearch)
             print("Loading WordBeamSearch...")
@@ -961,7 +1014,7 @@ class Model:
             corpus = open(self.modelDir+'corpus.txt').read()
             
             # decode using the "Words" mode of word beam search
-            self.decoder = word_beam_search_module.word_beam_search(tf.nn.softmax(self.ctcIn3dTBC, dim=2), 50, 'Words', 0.0, corpus.encode('utf8'), chars.encode('utf8'), wordChars.encode('utf8'))
+            self.decoder = word_beam_search_module.word_beam_search(tf.nn.softmax(self.ctcIn3dTBC, axis=2), 50, 'Words', 0.0, corpus.encode('utf8'), chars.encode('utf8'), wordChars.encode('utf8'))
 
 
     def setupTF(self):
@@ -1196,7 +1249,7 @@ def is_valid_file(parser, arg):
 class FilePaths:
     "filenames and paths to data"
     fnCharList = 'morseCharList.txt'
-    fnAccuracy = 'model-arrl3/accuracy.txt'
+    fnAccuracy = 'model-arrl5/accuracy.txt'
     fnTrain = 'data/'
     fnInfer = 'audio/6db42dd27d414097b2f02c4ca7a800e9.wav'
     fnCorpus = "morseCorpus.txt"
@@ -1295,7 +1348,7 @@ def main():
 
     args = parser.parse_args()
 
-    config = Config('model_arrl3.yaml') #read configs for current training/validation/inference job
+    config = Config('model_arrl4.yaml') #read configs for current training/validation/inference job
 
     decoderType = DecoderType.WordBeamSearch
     #decoderType = DecoderType.BeamSearch
@@ -1363,7 +1416,7 @@ def main():
         if args.silence:
             print(f"SILENCE REMOVAL ON")
             remove_silence = True
-        config = Config('model.yaml')
+        config = Config('model_arrl4.yaml')
         print("*"*80)
         print(open(config.value("experiment.fnAccuracy")).read())
         start_time = datetime.datetime.now()

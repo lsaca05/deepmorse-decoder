@@ -1,0 +1,103 @@
+TensorFlow 2.0 Upgrade Script
+-----------------------------
+Converted 5 files
+Detected 8 issues that require attention
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+File: morse\MorseDecoder.py
+--------------------------------------------------------------------------------
+morse\MorseDecoder.py:1116:8: WARNING: *.save requires manual check. (This warning is only applicable if the code saves a tf.Keras model) Keras model.save now saves to the Tensorflow SavedModel format by default, instead of HDF5. To continue saving to HDF5, add the argument save_format='h5' to the save() function.
+morse\MorseDecoder.py:1156:12: WARNING: *.save requires manual check. (This warning is only applicable if the code saves a tf.Keras model) Keras model.save now saves to the Tensorflow SavedModel format by default, instead of HDF5. To continue saving to HDF5, add the argument save_format='h5' to the save() function.
+--------------------------------------------------------------------------------
+File: morse\legacy\MorseDecoder_original.py
+--------------------------------------------------------------------------------
+morse\legacy\MorseDecoder_original.py:1085:8: WARNING: *.save requires manual check. (This warning is only applicable if the code saves a tf.Keras model) Keras model.save now saves to the Tensorflow SavedModel format by default, instead of HDF5. To continue saving to HDF5, add the argument save_format='h5' to the save() function.
+morse\legacy\MorseDecoder_original.py:1125:12: WARNING: *.save requires manual check. (This warning is only applicable if the code saves a tf.Keras model) Keras model.save now saves to the Tensorflow SavedModel format by default, instead of HDF5. To continue saving to HDF5, add the argument save_format='h5' to the save() function.
+--------------------------------------------------------------------------------
+File: morse\legacy\oldMorseDecoder.py
+--------------------------------------------------------------------------------
+morse\legacy\oldMorseDecoder.py:1062:8: WARNING: *.save requires manual check. (This warning is only applicable if the code saves a tf.Keras model) Keras model.save now saves to the Tensorflow SavedModel format by default, instead of HDF5. To continue saving to HDF5, add the argument save_format='h5' to the save() function.
+morse\legacy\oldMorseDecoder.py:1102:12: WARNING: *.save requires manual check. (This warning is only applicable if the code saves a tf.Keras model) Keras model.save now saves to the Tensorflow SavedModel format by default, instead of HDF5. To continue saving to HDF5, add the argument save_format='h5' to the save() function.
+--------------------------------------------------------------------------------
+File: morse\legacy\oldMorseDecoderV2.py
+--------------------------------------------------------------------------------
+morse\legacy\oldMorseDecoderV2.py:1062:8: WARNING: *.save requires manual check. (This warning is only applicable if the code saves a tf.Keras model) Keras model.save now saves to the Tensorflow SavedModel format by default, instead of HDF5. To continue saving to HDF5, add the argument save_format='h5' to the save() function.
+morse\legacy\oldMorseDecoderV2.py:1102:12: WARNING: *.save requires manual check. (This warning is only applicable if the code saves a tf.Keras model) Keras model.save now saves to the Tensorflow SavedModel format by default, instead of HDF5. To continue saving to HDF5, add the argument save_format='h5' to the save() function.
+================================================================================
+Detailed log follows:
+
+================================================================================
+================================================================================
+Input tree: 'morse'
+================================================================================
+--------------------------------------------------------------------------------
+Processing file 'morse\\MorseDecoder.py'
+ outputting to 'morse\\MorseDecoder.py'
+--------------------------------------------------------------------------------
+
+909:19: INFO: Added keywords to args of function 'tf.nn.conv2d'
+909:19: INFO: Renamed keyword argument for tf.nn.conv2d from filter to filters
+959:26: INFO: Added keywords to args of function 'tf.transpose'
+972:20: INFO: Added keywords to args of function 'tf.reduce_mean'
+972:35: INFO: Renamed 'tf.nn.ctc_loss' to 'tf.compat.v1.nn.ctc_loss'
+995:99: INFO: Renamed keyword argument for tf.nn.softmax from dim to axis
+1116:8: WARNING: *.save requires manual check. (This warning is only applicable if the code saves a tf.Keras model) Keras model.save now saves to the Tensorflow SavedModel format by default, instead of HDF5. To continue saving to HDF5, add the argument save_format='h5' to the save() function.
+1156:12: WARNING: *.save requires manual check. (This warning is only applicable if the code saves a tf.Keras model) Keras model.save now saves to the Tensorflow SavedModel format by default, instead of HDF5. To continue saving to HDF5, add the argument save_format='h5' to the save() function.
+1345:12: INFO: Renamed 'tf.reset_default_graph' to 'tf.compat.v1.reset_default_graph'
+1354:12: INFO: Renamed 'tf.reset_default_graph' to 'tf.compat.v1.reset_default_graph'
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+Processing file 'morse\\__init__.py'
+ outputting to 'morse\\__init__.py'
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+Processing file 'morse\\legacy\\MorseDecoder_original.py'
+ outputting to 'morse\\legacy\\MorseDecoder_original.py'
+--------------------------------------------------------------------------------
+
+903:19: INFO: Added keywords to args of function 'tf.nn.conv2d'
+903:19: INFO: Renamed keyword argument for tf.nn.conv2d from filter to filters
+937:26: INFO: Added keywords to args of function 'tf.transpose'
+943:20: INFO: Added keywords to args of function 'tf.reduce_mean'
+964:99: INFO: Renamed keyword argument for tf.nn.softmax from dim to axis
+1085:8: WARNING: *.save requires manual check. (This warning is only applicable if the code saves a tf.Keras model) Keras model.save now saves to the Tensorflow SavedModel format by default, instead of HDF5. To continue saving to HDF5, add the argument save_format='h5' to the save() function.
+1125:12: WARNING: *.save requires manual check. (This warning is only applicable if the code saves a tf.Keras model) Keras model.save now saves to the Tensorflow SavedModel format by default, instead of HDF5. To continue saving to HDF5, add the argument save_format='h5' to the save() function.
+1314:12: INFO: Renamed 'tf.reset_default_graph' to 'tf.compat.v1.reset_default_graph'
+1323:12: INFO: Renamed 'tf.reset_default_graph' to 'tf.compat.v1.reset_default_graph'
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+Processing file 'morse\\legacy\\oldMorseDecoder.py'
+ outputting to 'morse\\legacy\\oldMorseDecoder.py'
+--------------------------------------------------------------------------------
+
+880:19: INFO: Added keywords to args of function 'tf.nn.conv2d'
+880:19: INFO: Renamed keyword argument for tf.nn.conv2d from filter to filters
+894:17: INFO: Renamed 'tf.contrib.rnn.LSTMCell' to 'tf.compat.v1.nn.rnn_cell.LSTMCell'
+897:18: INFO: Renamed 'tf.contrib.rnn.MultiRNNCell' to 'tf.compat.v1.nn.rnn_cell.MultiRNNCell'
+901:24: INFO: Renamed 'tf.nn.bidirectional_dynamic_rnn' to 'tf.compat.v1.nn.bidirectional_dynamic_rnn'
+907:29: INFO: Renamed 'tf.truncated_normal' to 'tf.random.truncated_normal'
+914:26: INFO: Added keywords to args of function 'tf.transpose'
+920:20: INFO: Added keywords to args of function 'tf.reduce_mean'
+930:27: INFO: Removed argument merge_repeated for function tf.nn.ctc_beam_search_decoder
+941:99: INFO: Renamed keyword argument for tf.nn.softmax from dim to axis
+1062:8: WARNING: *.save requires manual check. (This warning is only applicable if the code saves a tf.Keras model) Keras model.save now saves to the Tensorflow SavedModel format by default, instead of HDF5. To continue saving to HDF5, add the argument save_format='h5' to the save() function.
+1102:12: WARNING: *.save requires manual check. (This warning is only applicable if the code saves a tf.Keras model) Keras model.save now saves to the Tensorflow SavedModel format by default, instead of HDF5. To continue saving to HDF5, add the argument save_format='h5' to the save() function.
+1291:12: INFO: Renamed 'tf.reset_default_graph' to 'tf.compat.v1.reset_default_graph'
+1300:12: INFO: Renamed 'tf.reset_default_graph' to 'tf.compat.v1.reset_default_graph'
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+Processing file 'morse\\legacy\\oldMorseDecoderV2.py'
+ outputting to 'morse\\legacy\\oldMorseDecoderV2.py'
+--------------------------------------------------------------------------------
+
+1062:8: WARNING: *.save requires manual check. (This warning is only applicable if the code saves a tf.Keras model) Keras model.save now saves to the Tensorflow SavedModel format by default, instead of HDF5. To continue saving to HDF5, add the argument save_format='h5' to the save() function.
+1102:12: WARNING: *.save requires manual check. (This warning is only applicable if the code saves a tf.Keras model) Keras model.save now saves to the Tensorflow SavedModel format by default, instead of HDF5. To continue saving to HDF5, add the argument save_format='h5' to the save() function.
+--------------------------------------------------------------------------------
+

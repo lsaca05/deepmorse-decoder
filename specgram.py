@@ -178,7 +178,7 @@ def main():
 
 
     # Load the Tensorlow model
-    config = Config("model_arrl3.yaml")
+    config = Config("model_arrl5.yaml")
     model = Model(
         open(config.value("experiment.fnCharList")).read(),
         config,

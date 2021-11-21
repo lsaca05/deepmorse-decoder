@@ -1,0 +1,30 @@
+TensorFlow 2.0 Upgrade Script
+-----------------------------
+Converted 1 files
+Detected 2 issues that require attention
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+File: morse/MorseDecoder.py
+--------------------------------------------------------------------------------
+morse/MorseDecoder.py:1085:8: WARNING: *.save requires manual check. (This warning is only applicable if the code saves a tf.Keras model) Keras model.save now saves to the Tensorflow SavedModel format by default, instead of HDF5. To continue saving to HDF5, add the argument save_format='h5' to the save() function.
+morse/MorseDecoder.py:1125:12: WARNING: *.save requires manual check. (This warning is only applicable if the code saves a tf.Keras model) Keras model.save now saves to the Tensorflow SavedModel format by default, instead of HDF5. To continue saving to HDF5, add the argument save_format='h5' to the save() function.
+================================================================================
+Detailed log follows:
+
+================================================================================
+--------------------------------------------------------------------------------
+Processing file 'morse/MorseDecoder.py'
+ outputting to 'morse/MorseDecoderV2.py'
+--------------------------------------------------------------------------------
+
+903:19: INFO: Added keywords to args of function 'tf.nn.conv2d'
+903:19: INFO: Renamed keyword argument for tf.nn.conv2d from filter to filters
+937:26: INFO: Added keywords to args of function 'tf.transpose'
+943:20: INFO: Added keywords to args of function 'tf.reduce_mean'
+964:99: INFO: Renamed keyword argument for tf.nn.softmax from dim to axis
+1085:8: WARNING: *.save requires manual check. (This warning is only applicable if the code saves a tf.Keras model) Keras model.save now saves to the Tensorflow SavedModel format by default, instead of HDF5. To continue saving to HDF5, add the argument save_format='h5' to the save() function.
+1125:12: WARNING: *.save requires manual check. (This warning is only applicable if the code saves a tf.Keras model) Keras model.save now saves to the Tensorflow SavedModel format by default, instead of HDF5. To continue saving to HDF5, add the argument save_format='h5' to the save() function.
+1314:12: INFO: Renamed 'tf.reset_default_graph' to 'tf.compat.v1.reset_default_graph'
+1323:12: INFO: Renamed 'tf.reset_default_graph' to 'tf.compat.v1.reset_default_graph'
+--------------------------------------------------------------------------------
+
