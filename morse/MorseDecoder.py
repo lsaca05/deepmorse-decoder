@@ -6,6 +6,7 @@ A Morse Decoder implementation using TensorFlow library.
 Learn to classify Morse code sequences using a neural network with CNN + LSTM + CTC
 
 Adapted by:  Mauri Niininen (AG1LE) for Morse code learning
+Improved by: Lucas Saca, as part of a Walla Walla University Edward F. Cross School of Engineering Capstone Project.
 
 From: Handwritten Text Recognition (HTR) system implemented with TensorFlow.
 by Harald Scheidl
@@ -30,7 +31,6 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import datetime
 
-tf.compat.v1.disable_eager_execution()
 
 class Config():
 
@@ -324,6 +324,7 @@ def morse(text, file_name=None, SNR_dB=20, f_code=600, Fs=8000, code_speed=20, l
         "8": np.concatenate((Dah,ssp,Dah,ssp,Dah,ssp,Dit,ssp,Dit)),
         "9": np.concatenate((Dah,ssp,Dah,ssp,Dah,ssp,Dah,ssp,Dit)),
         "0": np.concatenate((Dah,ssp,Dah,ssp,Dah,ssp,Dah,ssp,Dah)),
+        " ": np.concatenate((ssp, ssp, ssp, ssp, ssp, ssp, ssp)) # 7 dits
       }
     text = text.upper()
 
@@ -855,6 +856,9 @@ class Model:
         "init model: add CNN, RNN and CTC and initialize TF"
         global TF2
         TF2 = True
+        # if TF2 is False:
+        tf.compat.v1.disable_eager_execution()
+
         # model constants
         self.modelDir = config.value('model.name') 
         self.batchSize = config.value('model.batchSize')  # was 50 
@@ -967,7 +971,7 @@ class Model:
         self.ctcIn3dTBC = tf.transpose(self.rnnOut3d, [1, 0, 2])
         # ground truth text as sparse tensor
         # SparseTensor(indices=Tensor("Placeholder:0", shape=(None, 2), dtype=int64), values=Tensor("Placeholder_1:0", shape=(None,), dtype=int32), dense_shape=Tensor("Placeholder_2:0", shape=(2,), dtype=int64))
-        # TODO - 3rd arg compat needs conversion
+        # TODO - This pisses off the compiler when used with eager execution. Symbolic keras cannot be used with TF SparseTensor API?
         if TF2 is True:
             self.gtTexts = tf.SparseTensor(tf.keras.Input(dtype = tf.int64, shape = [2]), tf.keras.Input(dtype = tf.int32, shape = []), tf.keras.Input(dtype=tf.int64, shape=[], batch_size=2))
         else:
@@ -1007,14 +1011,22 @@ class Model:
         elif self.decoderType == DecoderType.WordBeamSearch:
             # import compiled word beam search operation (see https://github.com/githubharald/CTCWordBeamSearch)
             print("Loading WordBeamSearch...")
-            word_beam_search_module = tf.load_op_library('cpp/proj/TFWordBeamSearch.so')
+            # word_beam_search_module = tf.load_op_library('cpp/proj/TFWordBeamSearch.so')
+            from word_beam_search import WordBeamSearch
+
             # prepare information about language (dictionary, characters in dataset, characters forming words) 
             chars = str().join(self.charList)
-            wordChars = open(self.modelDir+'wordCharList.txt').read().splitlines()[0]
-            corpus = open(self.modelDir+'corpus.txt').read()
-            
+            wordChars = open('Volumes/Elements/' + self.modelDir+'wordCharList.txt').read().splitlines()[0]
+            corpus = open('Volumes/Elements/' + self.modelDir+'corpus.txt').read()
+
+            # TODO --  needs rewriting since imported library has changed, this or the SparseTensor/Keras TODO. Eager execution preferred.
             # decode using the "Words" mode of word beam search
-            self.decoder = word_beam_search_module.word_beam_search(tf.nn.softmax(self.ctcIn3dTBC, axis=2), 50, 'Words', 0.0, corpus.encode('utf8'), chars.encode('utf8'), wordChars.encode('utf8'))
+            # self.decoder = word_beam_search_module.word_beam_search(tf.nn.softmax(self.ctcIn3dTBC, axis=2), 50, 'Words', 0.0, corpus.encode('utf8'), chars.encode('utf8'), wordChars.encode('utf8'))
+            wbs = WordBeamSearch(50, 'Words', 0.0, corpus.encode('utf8'), chars.encode('utf8'), wordChars.encode('utf8'))
+            # print(tf.nn.softmax(self.ctcIn3dTBC, axis=2))
+            # exit()
+            # requires eager execution to convert ctcin3dTBC to numpy array
+            self.decoder = wbs.compute(tf.nn.softmax(self.ctcIn3dTBC, axis=2))
 
 
     def setupTF(self):
