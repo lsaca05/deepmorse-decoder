@@ -7,7 +7,7 @@ Further improved by Lucas Saca.
 
 Make sure you have Python 3.6.5 or later available in your system.
 
-Downloading and utilizing cuDNN will make model training significantly faster --  took me about 1.25-1.5 hours for the model to converge.
+Downloading and utilizing cuDNN will make model training significantly faster --  took me about 1.25-1.5 hours for the model to converge. TF2 requires CUDA v11.x.
 
 To use the spectrogram in Python 3.7+, download the appropriate unofficial PyAudio .whl file from https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio and install PyAudio from it.
 
