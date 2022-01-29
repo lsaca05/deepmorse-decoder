@@ -2,7 +2,7 @@ import numpy as np
 from scipy.io.wavfile import write
 import random
 
-import MorseCode
+from morseCode import MorseCode
 
 def morse(text, file_name=None, SNR_dB=20, f_code=600, Fs=8000, code_speed=20, length_seconds=4, total_seconds=8,play_sound=True):
     '''
@@ -180,6 +180,7 @@ def morse(text, file_name=None, SNR_dB=20, f_code=600, Fs=8000, code_speed=20, l
     morsecode = morsecode/max_n
     
     if file_name:
+        # TODO - Cannot write "?","/" to file
         write(file_name, Fs, morsecode)
     if play_sound:
         sd.play(morsecode, Fs)

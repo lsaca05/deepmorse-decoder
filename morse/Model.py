@@ -1,6 +1,6 @@
 import tensorflow as tf
 import numpy as np
-import DecoderType
+from decoderType import DecoderType
 import sys
 
 class Model: 

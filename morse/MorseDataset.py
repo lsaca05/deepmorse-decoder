@@ -1,8 +1,9 @@
 import os
 import random
 
-import Sample
-import Batch
+from sample import Sample
+from batch import Batch
+from image import create_image
 
 class MorseDataset():
 
@@ -34,14 +35,16 @@ class MorseDataset():
             # ignore comment line
             if not line or line[0]=='#':
                 continue
-            
-            lineSplit = line.strip().split(' ')
+            # print(line)
+            # lineSplit = line.strip().split(' ')
+            # ensure that words starting with a space are correctly split, exclude last character (endline)
+            lineSplit = line.strip('\n').split('.wav ')
             # print(lineSplit)
             assert len(lineSplit) >= 2, "line is {}".format(line)
             
             # filenames: audio/*.wav
-            fileNameAudio = lineSplit[0]
-
+            # fileNameAudio = lineSplit[0]
+            fileNameAudio = lineSplit[0] + '.wav'
             # Ground Truth text - open files and append to samples
             #
 

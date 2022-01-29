@@ -178,7 +178,7 @@ def main():
 
 
     # Load the TensorFlow model
-    config = Config("model_arrl4.yaml")
+    config = Config("model_arrl6.yaml")
     model = Model(
         open(config.value("experiment.fnCharList")).read(),
         config,

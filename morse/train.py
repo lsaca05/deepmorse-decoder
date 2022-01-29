@@ -1,6 +1,6 @@
 import datetime
-import validate
-import FilePaths
+from validate import validate
+from filePaths import FilePaths
 
 def train(model, loader):
     "train NN"
