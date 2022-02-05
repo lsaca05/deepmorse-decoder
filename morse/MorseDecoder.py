@@ -14,6 +14,24 @@ See: https://github.com/githubharald/SimpleHTR
 """
 
 from __future__ import division
+from validate import validate
+from train import train
+from model import Model
+from generate_dataset import generate_dataset
+from morseDataset import MorseDataset
+import generate_dataset
+from filePaths import FilePaths
+from decoderType import DecoderType
+from config import Config
+from batch import Batch
+import os.path
+import editdistance
+import cv2
+import argparse
+from image import create_image
+from scipy.io.wavfile import write
+import scipy as sp
+import math
 from __future__ import print_function
 
 import sys
@@ -32,10 +50,6 @@ import matplotlib.cm as cm
 import datetime
 
 
-    
-
-
-
 # Read WAV file containing Morse code and create 256x1 (or 16x16) tiles (256 samples/4 seconds)
 from scipy.io import wavfile
 from scipy.signal import butter, filtfilt
@@ -43,13 +57,11 @@ import numpy as np
 
 from scipy.io import wavfile
 from scipy.signal import butter, filtfilt, periodogram
-#from peakdetect import peakdet  # download peakdetect from # https://gist.github.com/endolith/250860
-
-
+# from peakdetect import peakdet  # download peakdetect from # https://gist.github.com/endolith/250860
 
 
 # Read morse.wav from start_time=0 duration=4 seconds
-# save demodulated/decimated signal (1,256) to morse.npy 
+# save demodulated/decimated signal (1,256) to morse.npy
 # options:
 # decimate: Fs/16   Fs/64  Fs/64
 # duration: 2        4       16
@@ -82,24 +94,7 @@ plt.show()
 """
 
 
-import numpy as np
-import math
-import scipy as sp
-from scipy.io.wavfile import write
 #import sounddevice as sd
-import matplotlib.pyplot as plt 
-
-
-
-from image import create_image
-
-
-import sys
-import argparse
-import cv2
-import editdistance
-import os.path
-from batch import Batch
 
 
 def is_valid_file(parser, arg):
@@ -108,10 +103,11 @@ def is_valid_file(parser, arg):
     else:
         return arg  # return an open file handle
 
+
 def infer(model, fnImg):
     "recognize text in image provided by file path"
     img = create_image(fnImg, model.imgSize)
-    plt.imshow(img,cmap = cm.Greys_r)
+    plt.imshow(img, cmap=cm.Greys_r)
     batch = Batch(None, [img])
     (recognized, probability) = model.inferBatch(batch, True)
     print('Recognized:', '"' + recognized[0] + '"')
@@ -122,48 +118,47 @@ def infer(model, fnImg):
 #from pyAudioAnalysis.audioSegmentation import silence_removal
 
 def infer_image(model, o):
-    im = o[0::1].reshape(1,256)
+    im = o[0::1].reshape(1, 256)
     im = im*256.
-    img = cv2.resize(im, model.imgSize, interpolation = cv2.INTER_AREA)
-    fname =f'dummy{uuid.uuid4().hex}.png'
-    cv2.imwrite(fname,img)
+    img = cv2.resize(im, model.imgSize, interpolation=cv2.INTER_AREA)
+    fname = f'dummy{uuid.uuid4().hex}.png'
+    cv2.imwrite(fname, img)
     img = cv2.transpose(img)
     batch = Batch(None, [img])
     (recognized, probability) = model.inferBatch(batch, True)
     return fname, recognized, probability
 
 
-   
 def infer_file(model, fname):
     print(f"SILENCE REMOVAL:{remove_silence}")
     if remove_silence:
         print()
         tone = find_peak(fname)
-        [Fs,x] = wavfile.read(fname)
+        [Fs, x] = wavfile.read(fname)
         segments = silence_removal(x, Fs, 0.25, 0.05, 0.2, 0.2, False)
-        for start, stop in segments: 
-            print("*"*80,f"start:{start}, stop:{stop} dur:{stop-start}")
-            o,dur = process_audio_file2(fname, start, stop, tone)
+        for start, stop in segments:
+            print("*"*80, f"start:{start}, stop:{stop} dur:{stop-start}")
+            o, dur = process_audio_file2(fname, start, stop, tone)
             start_time = datetime.datetime.now()
             iname, recognized, probability = infer_image(model, o[0:256])
             stop_time = datetime.datetime.now()
-            if True: #probability[0] > 0.00005:
+            if True:  # probability[0] > 0.00005:
                 print(f'File:{iname}')
                 print('Recognized:', '"' + recognized[0] + '"')
                 print('Probability:', probability[0])
                 print('Duration:{}'.format(stop_time-start_time))
-        return 
-    else:        
-        sample = 4.0 
+        return
+    else:
+        sample = 4.0
         start = 0.
         tone = find_peak(fname)
-        o,dur = process_audio_file(fname,start,sample, tone)
+        o, dur = process_audio_file(fname, start, sample, tone)
         while start < (dur - sample):
-            print(start,dur)
-            im = o[0::1].reshape(1,256)
+            print(start, dur)
+            im = o[0::1].reshape(1, 256)
             im = im*256.
-            img = cv2.resize(im, model.imgSize, interpolation = cv2.INTER_AREA)
-            cv2.imwrite(f'dummy{start}.png',img)
+            img = cv2.resize(im, model.imgSize, interpolation=cv2.INTER_AREA)
+            cv2.imwrite(f'dummy{start}.png', img)
 
             img = cv2.transpose(img)
 
@@ -176,18 +171,8 @@ def infer_file(model, fname):
                 print('Probability:', probability[0])
                 print('Duration:{}'.format(stop_time-start_time))
             start += 1./1
-            o,dur = process_audio_file(fname,start,sample, tone)
+            o, dur = process_audio_file(fname, start, sample, tone)
 
- 
-from config import Config
-from decoderType import DecoderType
-from filePaths import FilePaths
-import generate_dataset
-from morseDataset import MorseDataset
-from generate_dataset import generate_dataset
-from model import Model
-from train import train
-from validate import validate
 
 def main():
     "main function"
@@ -197,32 +182,39 @@ def main():
     # optional command line args
     parser = argparse.ArgumentParser()
     parser.add_argument("--train", help="train the NN", action="store_true")
-    parser.add_argument("--validate", help="validate the NN", action="store_true")
+    parser.add_argument(
+        "--validate", help="validate the NN", action="store_true")
     #parser.add_argument("--beamsearch", help="use beam search instead of best path decoding", action="store_true")
     #parser.add_argument("--wordbeamsearch", help="use word beam search instead of best path decoding", action="store_true")
-    parser.add_argument("--generate", help="generate a Morse dataset of random words", action="store_true")
-    parser.add_argument("--experiments", help="generate a set of experiments using config files", action="store_true")
-    parser.add_argument("--silence", help="remove silence", action="store_true")
+    parser.add_argument(
+        "--generate", help="generate a Morse dataset of random words", action="store_true")
+    parser.add_argument(
+        "--experiments", help="generate a set of experiments using config files", action="store_true")
+    parser.add_argument("--silence", help="remove silence",
+                        action="store_true")
     parser.add_argument("-f", dest="filename", required=False,
-                    help="input audio file ", metavar="FILE",
-                    type=lambda x: is_valid_file(parser, x))
+                        help="input audio file ", metavar="FILE",
+                        type=lambda x: is_valid_file(parser, x))
 
     args = parser.parse_args()
 
-    config = Config('model_arrl6.yaml') #read configs for current training/validation/inference job
+    # read configs for current training/validation/inference job
+    config = Config('model_arrl6.yaml')
 
     decoderType = DecoderType.WordBeamSearch
     #decoderType = DecoderType.BeamSearch
     #decoderType = DecoderType.BestPath
-    
-    #if args.beamsearch:
+
+    # if args.beamsearch:
     #    decoderType = DecoderType.BeamSearch
-    #elif args.wordbeamsearch:
+    # elif args.wordbeamsearch:
     #    decoderType = DecoderType.WordBeamSearch
     if args.experiments:
         print("*"*80)
-        print(f"Looking for model files in {config.value('experiment.fnExperiments')}")
-        experiments = [f for f in listdir(config.value("experiment.fnExperiments")) if isfile(join(config.value("experiment.fnExperiments"), f))]
+        print(
+            f"Looking for model files in {config.value('experiment.fnExperiments')}")
+        experiments = [f for f in listdir(config.value("experiment.fnExperiments")) if isfile(
+            join(config.value("experiment.fnExperiments"), f))]
         print(experiments)
         for filename in experiments:
             tf.reset_default_graph()
@@ -233,10 +225,11 @@ def main():
             model = Model(loader.charList, config, decoderType)
             loss, charErrorRate, wordAccuracy = train(model, loader)
             with open(FilePaths.fnResults, 'a+') as fr:
-                fr.write("\nexperiment:{} loss:{} charErrorRate:{} wordAccuracy:{}".format(filename, min(loss), min(charErrorRate), max(wordAccuracy)))
+                fr.write("\nexperiment:{} loss:{} charErrorRate:{} wordAccuracy:{}".format(
+                    filename, min(loss), min(charErrorRate), max(wordAccuracy)))
             tf.reset_default_graph()
         return
-    # train or validate on IAM dataset    
+    # train or validate on IAM dataset
     if args.train or args.validate:
         # load training data, create TF model
         #loader = DataLoader(FilePaths.fnTrain, Model.batchSize, Model.imgSize, Model.maxTextLen)
@@ -246,16 +239,18 @@ def main():
         loader = MorseDataset(config)
 
         # save characters of model for inference mode
-        open(config.value("experiment.fnCharList"), 'w').write(str().join(loader.charList))
-                
+        open(config.value("experiment.fnCharList"),
+             'w').write(str().join(loader.charList))
+
         # save words contained in dataset into file
-        open(config.value("experiment.fnCorpus"), 'w').write(str(' ').join(loader.trainWords + loader.validationWords))
-        
+        open(config.value("experiment.fnCorpus"), 'w').write(
+            str(' ').join(loader.trainWords + loader.validationWords))
+
         # execute training or validation
         if args.train:
             model = Model(loader.charList, config, decoderType)
             loss, charErrorRate, wordAccuracy = train(model, loader)
-            plt.figure(figsize=(20,10))
+            plt.figure(figsize=(20, 10))
             plt.subplot(3, 1, 1)
             plt.title("Character Error Rate")
             plt.plot(charErrorRate)
@@ -267,7 +262,8 @@ def main():
             plt.plot(loss)
             plt.show()
         elif args.validate:
-            model = Model(loader.charList, config, decoderType, mustRestore=True)
+            model = Model(loader.charList, config,
+                          decoderType, mustRestore=True)
             validate(model, loader)
     elif args.generate:
         generate_dataset(config)
@@ -281,11 +277,12 @@ def main():
         print("*"*80)
         print(open(config.value("experiment.fnAccuracy")).read())
         start_time = datetime.datetime.now()
-        model = Model(open(config.value("experiment.fnCharList")).read(), config, decoderType, mustRestore=True)
-        print("Loading model took:{}".format(datetime.datetime.now()-start_time))
+        model = Model(open(config.value("experiment.fnCharList")
+                           ).read(), config, decoderType, mustRestore=True)
+        print("Loading model took:{}".format(
+            datetime.datetime.now()-start_time))
         infer_file(model, args.filename)
 
 
 if __name__ == "__main__":
     main()
-
