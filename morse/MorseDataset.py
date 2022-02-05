@@ -38,6 +38,7 @@ class MorseDataset():
             # print(line)
             # lineSplit = line.strip().split(' ')
             # ensure that words starting with a space are correctly split, exclude last character (endline)
+            # TODO - figure out workaround for "/" and "?".
             lineSplit = line.strip('\n').split('.wav ')
             # print(lineSplit)
             assert len(lineSplit) >= 2, "line is {}".format(line)
