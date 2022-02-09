@@ -7,10 +7,10 @@ spectrogram visualization tool
 
 Dependencies: pyaudio, numpy and matplotlib
 """
+import matplotlib.pyplot as plt
+import numpy as np
 ############### Import Libraries ###############
 import pyaudio
-import numpy as np
-import matplotlib.pyplot as plt
 
 ############### Constants ###############
 # RATE = 44100 #sample rate
@@ -25,7 +25,7 @@ SAMPLE_LENGTH = int(CHUNK_SIZE * 1000 / RATE)  # length of each sample in ms
 open_mic:
 creates a PyAudio object and initializes the mic stream
 inputs: none
-ouputs: stream, PyAudio object
+outputs: stream, PyAudio object
 """
 
 

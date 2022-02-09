@@ -1,4 +1,3 @@
-
 # coding: utf-8
 
 """
@@ -13,50 +12,45 @@ by Harald Scheidl
 See: https://github.com/githubharald/SimpleHTR
 """
 
-from __future__ import division
-from validate import validate
-from train import train
-from model import Model
-from generate_dataset import generate_dataset
-from morseDataset import MorseDataset
-import generate_dataset
-from filePaths import FilePaths
-from decoderType import DecoderType
-from config import Config
-from batch import Batch
-import os.path
-import editdistance
-import cv2
-import argparse
-from image import create_image
-from scipy.io.wavfile import write
-import scipy as sp
-import math
-from __future__ import print_function
+from __future__ import division, print_function
 
-import sys
+import argparse
+import datetime
+import math
 import os
+import os.path
+import random
+import sys
 from os import listdir
 from os.path import isfile, join
-import tensorflow as tf
-import random
-from numpy.random import normal
-import numpy as np
-#from morse import Morse
+
+import cv2
+import editdistance
+import generate_dataset
+import matplotlib.cm as cm
+# from morse import Morse
 # import yaml                       # Config
 # from functools import reduce      # Config
 import matplotlib.pyplot as plt
-import matplotlib.cm as cm
-import datetime
-
-
+import numpy as np
+import scipy as sp
+import tensorflow as tf
+from batch import Batch
+from config import Config
+from decoderType import DecoderType
+from filePaths import FilePaths
+from generate_dataset import generate_dataset
+from image import create_image
+from model import Model
+from morseDataset import MorseDataset
+from numpy.random import normal
 # Read WAV file containing Morse code and create 256x1 (or 16x16) tiles (256 samples/4 seconds)
 from scipy.io import wavfile
-from scipy.signal import butter, filtfilt
-import numpy as np
-
-from scipy.io import wavfile
+from scipy.io.wavfile import write
 from scipy.signal import butter, filtfilt, periodogram
+from train import train
+from validate import validate
+
 # from peakdetect import peakdet  # download peakdetect from # https://gist.github.com/endolith/250860
 
 
@@ -94,7 +88,7 @@ plt.show()
 """
 
 
-#import sounddevice as sd
+# import sounddevice as sd
 
 
 def is_valid_file(parser, arg):
@@ -110,18 +104,19 @@ def infer(model, fnImg):
     plt.imshow(img, cmap=cm.Greys_r)
     batch = Batch(None, [img])
     (recognized, probability) = model.inferBatch(batch, True)
-    print('Recognized:', '"' + recognized[0] + '"')
-    print('Probability:', probability[0])
+    print("Recognized:", '"' + recognized[0] + '"')
+    print("Probability:", probability[0])
     print(recognized)
 
 
-#from pyAudioAnalysis.audioSegmentation import silence_removal
+# from pyAudioAnalysis.audioSegmentation import silence_removal
+
 
 def infer_image(model, o):
     im = o[0::1].reshape(1, 256)
-    im = im*256.
+    im = im * 256.0
     img = cv2.resize(im, model.imgSize, interpolation=cv2.INTER_AREA)
-    fname = f'dummy{uuid.uuid4().hex}.png'
+    fname = f"dummy{uuid.uuid4().hex}.png"
     cv2.imwrite(fname, img)
     img = cv2.transpose(img)
     batch = Batch(None, [img])
@@ -137,28 +132,28 @@ def infer_file(model, fname):
         [Fs, x] = wavfile.read(fname)
         segments = silence_removal(x, Fs, 0.25, 0.05, 0.2, 0.2, False)
         for start, stop in segments:
-            print("*"*80, f"start:{start}, stop:{stop} dur:{stop-start}")
+            print("*" * 80, f"start:{start}, stop:{stop} dur:{stop-start}")
             o, dur = process_audio_file2(fname, start, stop, tone)
             start_time = datetime.datetime.now()
             iname, recognized, probability = infer_image(model, o[0:256])
             stop_time = datetime.datetime.now()
             if True:  # probability[0] > 0.00005:
-                print(f'File:{iname}')
-                print('Recognized:', '"' + recognized[0] + '"')
-                print('Probability:', probability[0])
-                print('Duration:{}'.format(stop_time-start_time))
+                print(f"File:{iname}")
+                print("Recognized:", '"' + recognized[0] + '"')
+                print("Probability:", probability[0])
+                print("Duration:{}".format(stop_time - start_time))
         return
     else:
         sample = 4.0
-        start = 0.
+        start = 0.0
         tone = find_peak(fname)
         o, dur = process_audio_file(fname, start, sample, tone)
         while start < (dur - sample):
             print(start, dur)
             im = o[0::1].reshape(1, 256)
-            im = im*256.
+            im = im * 256.0
             img = cv2.resize(im, model.imgSize, interpolation=cv2.INTER_AREA)
-            cv2.imwrite(f'dummy{start}.png', img)
+            cv2.imwrite(f"dummy{start}.png", img)
 
             img = cv2.transpose(img)
 
@@ -167,10 +162,10 @@ def infer_file(model, fname):
             (recognized, probability) = model.inferBatch(batch, True)
             stop_time = datetime.datetime.now()
             if probability[0] > 0.0000:
-                print('Recognized:', '"' + recognized[0] + '"')
-                print('Probability:', probability[0])
-                print('Duration:{}'.format(stop_time-start_time))
-            start += 1./1
+                print("Recognized:", '"' + recognized[0] + '"')
+                print("Probability:", probability[0])
+                print("Duration:{}".format(stop_time - start_time))
+            start += 1.0 / 1
             o, dur = process_audio_file(fname, start, sample, tone)
 
 
@@ -182,69 +177,85 @@ def main():
     # optional command line args
     parser = argparse.ArgumentParser()
     parser.add_argument("--train", help="train the NN", action="store_true")
+    parser.add_argument("--validate", help="validate the NN", action="store_true")
+    # parser.add_argument("--beamsearch", help="use beam search instead of best path decoding", action="store_true")
+    # parser.add_argument("--wordbeamsearch", help="use word beam search instead of best path decoding", action="store_true")
     parser.add_argument(
-        "--validate", help="validate the NN", action="store_true")
-    #parser.add_argument("--beamsearch", help="use beam search instead of best path decoding", action="store_true")
-    #parser.add_argument("--wordbeamsearch", help="use word beam search instead of best path decoding", action="store_true")
+        "--generate",
+        help="generate a Morse dataset of random words",
+        action="store_true",
+    )
     parser.add_argument(
-        "--generate", help="generate a Morse dataset of random words", action="store_true")
+        "--experiments",
+        help="generate a set of experiments using config files",
+        action="store_true",
+    )
+    parser.add_argument("--silence", help="remove silence", action="store_true")
     parser.add_argument(
-        "--experiments", help="generate a set of experiments using config files", action="store_true")
-    parser.add_argument("--silence", help="remove silence",
-                        action="store_true")
-    parser.add_argument("-f", dest="filename", required=False,
-                        help="input audio file ", metavar="FILE",
-                        type=lambda x: is_valid_file(parser, x))
+        "-f",
+        dest="filename",
+        required=False,
+        help="input audio file ",
+        metavar="FILE",
+        type=lambda x: is_valid_file(parser, x),
+    )
 
     args = parser.parse_args()
 
     # read configs for current training/validation/inference job
-    config = Config('model_arrl6.yaml')
+    config = Config("model_arrl6.yaml")
 
     decoderType = DecoderType.WordBeamSearch
-    #decoderType = DecoderType.BeamSearch
-    #decoderType = DecoderType.BestPath
+    # decoderType = DecoderType.BeamSearch
+    # decoderType = DecoderType.BestPath
 
     # if args.beamsearch:
     #    decoderType = DecoderType.BeamSearch
     # elif args.wordbeamsearch:
     #    decoderType = DecoderType.WordBeamSearch
     if args.experiments:
-        print("*"*80)
-        print(
-            f"Looking for model files in {config.value('experiment.fnExperiments')}")
-        experiments = [f for f in listdir(config.value("experiment.fnExperiments")) if isfile(
-            join(config.value("experiment.fnExperiments"), f))]
+        print("*" * 80)
+        print(f"Looking for model files in {config.value('experiment.fnExperiments')}")
+        experiments = [
+            f
+            for f in listdir(config.value("experiment.fnExperiments"))
+            if isfile(join(config.value("experiment.fnExperiments"), f))
+        ]
         print(experiments)
         for filename in experiments:
             tf.reset_default_graph()
-            config = Config(FilePaths.fnExperiments+filename)
+            config = Config(FilePaths.fnExperiments + filename)
             generate_dataset(config)
             decoderType = DecoderType.WordBeamSearch
             loader = MorseDataset(config)
             model = Model(loader.charList, config, decoderType)
             loss, charErrorRate, wordAccuracy = train(model, loader)
-            with open(FilePaths.fnResults, 'a+') as fr:
-                fr.write("\nexperiment:{} loss:{} charErrorRate:{} wordAccuracy:{}".format(
-                    filename, min(loss), min(charErrorRate), max(wordAccuracy)))
+            with open(FilePaths.fnResults, "a+") as fr:
+                fr.write(
+                    "\nexperiment:{} loss:{} charErrorRate:{} wordAccuracy:{}".format(
+                        filename, min(loss), min(charErrorRate), max(wordAccuracy)
+                    )
+                )
             tf.reset_default_graph()
         return
     # train or validate on IAM dataset
     if args.train or args.validate:
         # load training data, create TF model
-        #loader = DataLoader(FilePaths.fnTrain, Model.batchSize, Model.imgSize, Model.maxTextLen)
-        #loader = DataLoader(FilePaths.fnTrain, Model.batchSize, Model.imgSize, Model.maxTextLen)
+        # loader = DataLoader(FilePaths.fnTrain, Model.batchSize, Model.imgSize, Model.maxTextLen)
+        # loader = DataLoader(FilePaths.fnTrain, Model.batchSize, Model.imgSize, Model.maxTextLen)
         decoderType = DecoderType.WordBeamSearch
         decoderType = DecoderType.BeamSearch
         loader = MorseDataset(config)
 
         # save characters of model for inference mode
-        open(config.value("experiment.fnCharList"),
-             'w').write(str().join(loader.charList))
+        open(config.value("experiment.fnCharList"), "w").write(
+            str().join(loader.charList)
+        )
 
         # save words contained in dataset into file
-        open(config.value("experiment.fnCorpus"), 'w').write(
-            str(' ').join(loader.trainWords + loader.validationWords))
+        open(config.value("experiment.fnCorpus"), "w").write(
+            str(" ").join(loader.trainWords + loader.validationWords)
+        )
 
         # execute training or validation
         if args.train:
@@ -262,8 +273,7 @@ def main():
             plt.plot(loss)
             plt.show()
         elif args.validate:
-            model = Model(loader.charList, config,
-                          decoderType, mustRestore=True)
+            model = Model(loader.charList, config, decoderType, mustRestore=True)
             validate(model, loader)
     elif args.generate:
         generate_dataset(config)
@@ -273,14 +283,17 @@ def main():
         if args.silence:
             print(f"SILENCE REMOVAL ON")
             remove_silence = True
-        config = Config('model_arrl6.yaml')
-        print("*"*80)
+        config = Config("model_arrl6.yaml")
+        print("*" * 80)
         print(open(config.value("experiment.fnAccuracy")).read())
         start_time = datetime.datetime.now()
-        model = Model(open(config.value("experiment.fnCharList")
-                           ).read(), config, decoderType, mustRestore=True)
-        print("Loading model took:{}".format(
-            datetime.datetime.now()-start_time))
+        model = Model(
+            open(config.value("experiment.fnCharList")).read(),
+            config,
+            decoderType,
+            mustRestore=True,
+        )
+        print("Loading model took:{}".format(datetime.datetime.now() - start_time))
         infer_file(model, args.filename)
 
 

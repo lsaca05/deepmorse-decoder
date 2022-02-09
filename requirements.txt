@@ -9,3 +9,8 @@ requests==2.26.0
 scipy==1.7.1
 tensorflow==2.7.0
 word_beam_search==1.0.1
+black
+pylint
+isort
+flake8
+codespell

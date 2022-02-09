@@ -1,13 +1,16 @@
 import datetime
-from validate import validate
+
 from filePaths import FilePaths
+from validate import validate
 
 
 def train(model, loader):
     "train NN"
     epoch = 0  # number of training epochs since start
-    bestCharErrorRate = float('inf')  # best validation character error rate
-    noImprovementSince = 0  # number of epochs no improvement of character error rate occured
+    bestCharErrorRate = float("inf")  # best validation character error rate
+    noImprovementSince = (
+        0  # number of epochs no improvement of character error rate occurred
+    )
     # stop training after this number of epochs without improvement
     earlyStopping = model.earlyStopping
     accLoss = []
@@ -16,17 +19,18 @@ def train(model, loader):
     start_time = datetime.datetime.now()
     while True:
         epoch += 1
-        print('Epoch: {} Duration:{}'.format(
-            epoch, datetime.datetime.now()-start_time))
+        print(
+            "Epoch: {} Duration:{}".format(epoch, datetime.datetime.now() - start_time)
+        )
 
         # train
-        print('Train NN - imgSize', model.imgSize)
+        print("Train NN - imgSize", model.imgSize)
         loader.trainSet()
         while loader.hasNext():
             iterInfo = loader.getIteratorInfo()
             batch = loader.getNext()
             loss = model.trainBatch(batch)
-            print('Batch:', iterInfo[0], '/', iterInfo[1], 'Loss:', loss)
+            print("Batch:", iterInfo[0], "/", iterInfo[1], "Loss:", loss)
             accLoss.append(loss)
 
         # validate
@@ -36,23 +40,35 @@ def train(model, loader):
 
         # if best validation accuracy so far, save model parameters
         if charErrorRate < bestCharErrorRate:
-            print('Character error rate {:4.1f}% improved, save model'.format(
-                charErrorRate*100.))
+            print(
+                "Character error rate {:4.1f}% improved, save model".format(
+                    charErrorRate * 100.0
+                )
+            )
             bestCharErrorRate = charErrorRate
             noImprovementSince = 0
             model.save()
-            open(FilePaths.fnAccuracy, 'w').write(
-                'Validation character error rate of saved model: {:4.1f}% word accuracy: {:4.1f}'.format(charErrorRate*100.0, wordAccuracy*100.))
+            open(FilePaths.fnAccuracy, "w").write(
+                "Validation character error rate of saved model: {:4.1f}% word accuracy: {:4.1f}".format(
+                    charErrorRate * 100.0, wordAccuracy * 100.0
+                )
+            )
         else:
             noImprovementSince += 1
-            print('Character error rate {:4.1f}% not improved in last {} epochs'.format(
-                charErrorRate*100., noImprovementSince))
+            print(
+                "Character error rate {:4.1f}% not improved in last {} epochs".format(
+                    charErrorRate * 100.0, noImprovementSince
+                )
+            )
 
         # stop training if no more improvement in the last x epochs
         if noImprovementSince >= earlyStopping:
-            print('No more improvement since {} epochs. Training stopped.'.format(
-                earlyStopping))
+            print(
+                "No more improvement since {} epochs. Training stopped.".format(
+                    earlyStopping
+                )
+            )
             break
     end_time = datetime.datetime.now()
-    print("Total training time was {}".format(end_time-start_time))
+    print("Total training time was {}".format(end_time - start_time))
     return accLoss, accChrErrRate, accWordAccuracy

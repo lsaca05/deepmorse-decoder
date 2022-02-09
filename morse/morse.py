@@ -1,12 +1,22 @@
-import numpy as np
-from scipy.io.wavfile import write
 import random
 
+import numpy as np
 from morseCode import MorseCode
+from scipy.io.wavfile import write
 
 
-def morse(text, file_name=None, SNR_dB=20, f_code=600, Fs=8000, code_speed=20, length_seconds=4, total_seconds=8, play_sound=True):
-    '''
+def morse(
+    text,
+    file_name=None,
+    SNR_dB=20,
+    f_code=600,
+    Fs=8000,
+    code_speed=20,
+    length_seconds=4,
+    total_seconds=8,
+    play_sound=True,
+):
+    """
     # MORSE converts text to playable morse code in wav format
     #
     # SYNTAX
@@ -20,7 +30,7 @@ def morse(text, file_name=None, SNR_dB=20, f_code=600, Fs=8000, code_speed=20, l
     #
     # Description:
     #
-    #   If the wave file name is specified, then the funtion will output a wav
+    #   If the wave file name is specified, then the function will output a wav
     #   file with that file name.  If only text is specified, then the function
     #   will only play the morse code wav file without saving it to a wav file.
     #   If a snr is specified, zero mean addative white Gaussian
@@ -35,22 +45,32 @@ def morse(text, file_name=None, SNR_dB=20, f_code=600, Fs=8000, code_speed=20, l
     #   x = morse('How are you doing my friend?','morsecode.wav', 3, 440,Fs, 20, 2^20,True), #(to play the file, and make the length 2^20)
     #
     #   Copyright 2018 Mauri Niininen, AG1LE
-    '''
+    """
 
     # t = 0:1/Fs:1.2/code_speed,  #One dit of time at w wpm is 1.2/w.
 
-    t = np.linspace(0., 1.2/code_speed, num=int(Fs*1.2 /
-                    code_speed), endpoint=True, retstep=False)
+    t = np.linspace(
+        0.0,
+        1.2 / code_speed,
+        num=int(Fs * 1.2 / code_speed),
+        endpoint=True,
+        retstep=False,
+    )
 
-    Dit = np.sin(2*np.pi*f_code*t)
+    Dit = np.sin(2 * np.pi * f_code * t)
     ssp = np.zeros(len(Dit))
     # one Dah of time is 3 times  dit time
-    t2 = np.linspace(0., 3*1.2/code_speed, num=3*int(Fs*1.2 /
-                     code_speed), endpoint=True, retstep=False)
-    #Dah = np.concatenate((Dit,Dit,Dit))
-    Dah = np.sin(2*np.pi*f_code*t2)
+    t2 = np.linspace(
+        0.0,
+        3 * 1.2 / code_speed,
+        num=3 * int(Fs * 1.2 / code_speed),
+        endpoint=True,
+        retstep=False,
+    )
+    # Dah = np.concatenate((Dit,Dit,Dit))
+    Dah = np.sin(2 * np.pi * f_code * t2)
 
-    lsp = np.zeros(len(Dah)),    # changed size argument to function of Dah
+    lsp = (np.zeros(len(Dah)),)  # changed size argument to function of Dah
 
     # Defining Characters & Numbers
     Codebook = {
@@ -95,12 +115,12 @@ def morse(text, file_name=None, SNR_dB=20, f_code=600, Fs=8000, code_speed=20, l
         "8": np.concatenate((Dah, ssp, Dah, ssp, Dah, ssp, Dit, ssp, Dit)),
         "9": np.concatenate((Dah, ssp, Dah, ssp, Dah, ssp, Dah, ssp, Dit)),
         "0": np.concatenate((Dah, ssp, Dah, ssp, Dah, ssp, Dah, ssp, Dah)),
-        " ": np.concatenate((ssp, ssp, ssp, ssp, ssp, ssp, ssp))  # 7 dits
+        " ": np.concatenate((ssp, ssp, ssp, ssp, ssp, ssp, ssp)),  # 7 dits
     }
     text = text.upper()
 
     # dit duration in seconds
-    dit = 1.2/code_speed
+    dit = 1.2 / code_speed
     # calculate the length of text in dit units
     txt_dits = MorseCode(text).len
     # calculate total text length in seconds
@@ -112,72 +132,92 @@ def morse(text, file_name=None, SNR_dB=20, f_code=600, Fs=8000, code_speed=20, l
         return np.zeros([1, 1])
 
     # calculate how many dits will fit in the
-    pad_dits = int((length_seconds - tot_len)/dit)
+    pad_dits = int((length_seconds - tot_len) / dit)
 
     # pad with random space to fit proper length
     morsecode = []
     pad = random.randint(0, pad_dits)
-    #print("pad_dits:{} pad:{}".format(pad_dits,pad))
+    # print("pad_dits:{} pad:{}".format(pad_dits,pad))
     for i in range(pad):
         morsecode = np.concatenate((morsecode, ssp))
 
     # start with pause (7 dit lengths)
-    #morsecode= np.concatenate((ssp,ssp,ssp,ssp,ssp,ssp,ssp))
+    # morsecode= np.concatenate((ssp,ssp,ssp,ssp,ssp,ssp,ssp))
 
     # concatenate all characters
     for ch in text:
-        if ch == ' ':
+        if ch == " ":
             morsecode = np.concatenate((morsecode, ssp, ssp, ssp, ssp))
-        elif ch == '\n':
+        elif ch == "\n":
             pass
         else:
             val = Codebook[ch]
             morsecode = np.concatenate((morsecode, val, ssp, ssp, ssp))
 
-    #morsecode = np.concatenate((morsecode, lsp))
+    # morsecode = np.concatenate((morsecode, lsp))
 
     if total_seconds:
-        append_length = Fs*total_seconds - len(morsecode)
-        if (append_length < 0):
-            print("Length {} isn't large enough for your message, it must be > {}.\n".format(
-                length_N, len(morsecode)))
+        append_length = Fs * total_seconds - len(morsecode)
+        if append_length < 0:
+            print(
+                "Length {} isn't large enough for your message, it must be > {}.\n".format(
+                    length_N, len(morsecode)
+                )
+            )
             return morsecode
         else:
             morsecode = np.concatenate((morsecode, np.zeros(append_length)))
 
     # end with pause (14 dit lengths)
     morsecode = np.concatenate(
-        (morsecode, ssp, ssp, ssp, ssp, ssp, ssp, ssp, ssp, ssp, ssp, ssp, ssp, ssp, ssp))
+        (
+            morsecode,
+            ssp,
+            ssp,
+            ssp,
+            ssp,
+            ssp,
+            ssp,
+            ssp,
+            ssp,
+            ssp,
+            ssp,
+            ssp,
+            ssp,
+            ssp,
+            ssp,
+        )
+    )
 
-    #noise = randn(size(morsecode)),
-    #[noisy,noise] = addnoise(morsecode,noise,snr),
+    # noise = randn(size(morsecode)),
+    # [noisy,noise] = addnoise(morsecode,noise,snr),
 
     if SNR_dB:
         # https://stackoverflow.com/questions/52913749/add-random-noise-with-specific-snr-to-a-signal
         # Desired SNR in dB
 
         # Desired linear SNR
-        SNR_linear = 10.0**(SNR_dB/10.0)
-        #print( "Linear snr = ", SNR_linear)
+        SNR_linear = 10.0 ** (SNR_dB / 10.0)
+        # print( "Linear snr = ", SNR_linear)
 
         # Measure power of signal - assume zero mean
         power = morsecode.var()
-        #print ("Power of signal = ", power)
+        # print ("Power of signal = ", power)
 
         # Calculate required noise power for desired SNR
-        noise_power = power/SNR_linear
-        #print ("Noise power = ", noise_power )
-        #print ("Calculated SNR = {:4.2f} dB".format(10*np.log10(power/noise_power )))
+        noise_power = power / SNR_linear
+        # print ("Noise power = ", noise_power )
+        # print ("Calculated SNR = {:4.2f} dB".format(10*np.log10(power/noise_power )))
 
         # Generate noise with calculated power (mu=0, sigma=1)
-        noise = np.sqrt(noise_power)*np.random.normal(0, 1, len(morsecode))
+        noise = np.sqrt(noise_power) * np.random.normal(0, 1, len(morsecode))
 
         # Add noise to signal
         morsecode = noise + morsecode
 
     # Normalize before saving
-    max_n = max(morsecode),
-    morsecode = morsecode/max_n
+    max_n = (max(morsecode),)
+    morsecode = morsecode / max_n
 
     if file_name:
         # TODO - Cannot write "?","/" to file
