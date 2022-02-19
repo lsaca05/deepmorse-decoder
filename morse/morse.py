@@ -217,6 +217,10 @@ def morse(
 
     # Normalize before saving
     max_n = (max(morsecode),)
+    if max_n == (0.0,):
+        print(max_n)
+        print(morsecode)
+        print("Sample: " + text + "~end~")
     morsecode = morsecode / max_n
 
     if file_name:

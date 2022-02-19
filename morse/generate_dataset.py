@@ -28,7 +28,8 @@ def generate_dataset(config):
     words_in_sample = config.value("morse.words_in_sample")
     print("SNR_DB:{}".format(SNR_DB))
     # rv = requests.get(URL, headers=hdr)
-    rv = open("morse/new_samples.txt").read()
+    # rv = open("morse/samples.txt").read()
+    file = open("morse/weighted_samples.txt").read()
     # if rv.status_code == 200:
     #     try:
     #         os.makedirs(filePath)
@@ -38,7 +39,8 @@ def generate_dataset(config):
     with open(fnTrain, "w") as mf:
         # print(rv)
         # words = rv.text.split("\n")
-        words = rv.split("\n")
+        # words = rv.split("\n")
+        words = file.split("\n")
         wordcount = len(words)
         words = [w.upper() for w in words if len(w) <= word_max_length]
         for i in range(count):  # count of samples to generate
@@ -55,7 +57,9 @@ def generate_dataset(config):
             # print(morse(phrase, audio_file, SNR[0], 600, 8000, speed[0], length_seconds, 8, False))
             # morse(phrase, audio_file, SNR[0], 600, 8000, speed[0], length_seconds, 8, False)
             # mf.write(audio_file+' '+phrase+'\n')
-            if not morse(
+            if phrase.isspace():
+                print("Sample was all spaces, didn't write")
+            elif not morse(
                 phrase,
                 audio_file,
                 SNR[0],

@@ -55,7 +55,7 @@ print(char_space)
 for _ in range(27000):
     # word = ( ''.join(random.choice(string.ascii_lowercase) + random.choice(string.digits) + random.choice((' ','','','','')) for i in range (3)) ) + '\n'
     word = (
-        "".join(random.choice(char_space) for i in range(random.randint(3, 7)))
+        "".join(random.choice(char_space) for i in range(random.randint(4, 7)))
     ) + "\n"
     print(word)
     file.write(word)

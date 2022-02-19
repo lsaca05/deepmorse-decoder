@@ -203,7 +203,7 @@ def main():
     args = parser.parse_args()
 
     # read configs for current training/validation/inference job
-    config = Config("model_arrl6.yaml")
+    config = Config("model_arrl7.yaml")
 
     decoderType = DecoderType.WordBeamSearch
     # decoderType = DecoderType.BeamSearch
@@ -283,7 +283,7 @@ def main():
         if args.silence:
             print(f"SILENCE REMOVAL ON")
             remove_silence = True
-        config = Config("model_arrl6.yaml")
+        config = Config("model_arrl7.yaml")
         print("*" * 80)
         print(open(config.value("experiment.fnAccuracy")).read())
         start_time = datetime.datetime.now()

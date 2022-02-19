@@ -180,7 +180,7 @@ def main():
     ############### Initialize Plot ###############
 
     # Load the TensorFlow model
-    config = Config("model_arrl6.yaml")
+    config = Config("model_arrl7.yaml")
     model = Model(
         open(config.value("experiment.fnCharList")).read(),
         config,

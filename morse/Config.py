@@ -1,4 +1,5 @@
 from functools import reduce
+from importlib.abc import Loader
 
 import yaml
 
@@ -6,7 +7,7 @@ import yaml
 class Config:
     def __init__(self, file_name):
         with open(file_name) as f:
-            self.config = yaml.load(f.read())
+            self.config = yaml.load(f.read(), Loader=yaml.Loader)
 
     def value(self, key):
         return reduce(lambda c, k: c[k], key.split("."), self.config)
