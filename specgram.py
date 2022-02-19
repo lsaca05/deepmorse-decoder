@@ -12,6 +12,7 @@ import matplotlib.animation as animation
 import matplotlib.pyplot as plt
 import numpy as np
 from fuzzysearch import find_near_matches
+
 ############### Import Libraries ###############
 from matplotlib.mlab import specgram
 from matplotlib.widgets import TextBox

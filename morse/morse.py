@@ -161,7 +161,7 @@ def morse(
         if append_length < 0:
             print(
                 "Length {} isn't large enough for your message, it must be > {}.\n".format(
-                    length_N, len(morsecode)
+                    append_length, len(morsecode)
                 )
             )
             return morsecode
@@ -227,6 +227,7 @@ def morse(
         # TODO - Cannot write "?","/" to file
         write(file_name, Fs, morsecode)
     if play_sound:
-        sd.play(morsecode, Fs)
+        # TODO - Is this necessary? No include anywhere for "sd"
+        # sd.play(morsecode, Fs)
         pass
     return morsecode

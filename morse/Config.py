@@ -1,8 +1,5 @@
 from functools import reduce
-from importlib.abc import Loader
-
 import yaml
-
 
 class Config:
     def __init__(self, file_name):

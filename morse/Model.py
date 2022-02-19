@@ -159,8 +159,20 @@ class Model:
         # BxTxC -> TxBxC
         self.ctcIn3dTBC = tf.transpose(self.rnnOut3d, [1, 0, 2])
         # ground truth text as sparse tensor
-        # SparseTensor(indices=Tensor("Placeholder:0", shape=(None, 2), dtype=int64), values=Tensor("Placeholder_1:0", shape=(None,), dtype=int32), dense_shape=Tensor("Placeholder_2:0", shape=(2,), dtype=int64))
-        # TODO - This pisses off the compiler when used with eager execution. Symbolic keras cannot be used with TF SparseTensor API?
+        # SparseTensor(indices=Tensor(
+        #     "Placeholder:0",
+        #     shape=(None, 2),
+        #     dtype=int64),
+        #     values=Tensor(
+        #     "Placeholder_1:0",
+        #     shape=(None,),
+        #     dtype=int32),
+        #     dense_shape=Tensor(
+        #     "Placeholder_2:0",
+        #     shape=(2,),
+        #     dtype=int64))
+        # TODO - This pisses off the compiler when used with eager execution.
+        # Symbolic keras cannot be used with TF SparseTensor API?
         if TF2 is True:
             self.gtTexts = tf.SparseTensor(
                 tf.keras.Input(dtype=tf.int64, shape=[2]),

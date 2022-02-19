@@ -28,6 +28,7 @@ import cv2
 import editdistance
 import generate_dataset
 import matplotlib.cm as cm
+
 # from morse import Morse
 # import yaml                       # Config
 # from functools import reduce      # Config
@@ -44,6 +45,7 @@ from image import create_image
 from model import Model
 from morseDataset import MorseDataset
 from numpy.random import normal
+
 # Read WAV file containing Morse code and create 256x1 (or 16x16) tiles (256 samples/4 seconds)
 from scipy.io import wavfile
 from scipy.io.wavfile import write
