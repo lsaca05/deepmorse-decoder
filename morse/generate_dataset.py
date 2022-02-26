@@ -7,9 +7,10 @@ import random
 import re
 import uuid
 
+from morse import morse
+
 # import requests
 
-from morse import morse
 
 
 def generate_dataset(config):
@@ -17,7 +18,7 @@ def generate_dataset(config):
     # URL = "https://svnweb.freebsd.org/csrg/share/dict/words?view=co&content-type=text/plain"
     # # Header needed as part of request, website blocks script/non-browser requests it seems
     # hdr = {'User-Agent' : 'Mozilla/5.0'}
-    filePath = config.value("model.name")
+    # filePath = config.value("model.name")
     fnTrain = config.value("morse.fnTrain")
     fnAudio = config.value("morse.fnAudio")
     code_speed = config.value("morse.code_speed")
@@ -41,7 +42,7 @@ def generate_dataset(config):
         # words = rv.text.split("\n")
         # words = rv.split("\n")
         words = file.split("\n")
-        wordcount = len(words)
+        # wordcount = len(words)
         words = [w.upper() for w in words if len(w) <= word_max_length]
         for i in range(count):  # count of samples to generate
             sample = random.sample(words, words_in_sample)

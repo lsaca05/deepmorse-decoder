@@ -1,8 +1,8 @@
 import cv2
-import pyaudio
+# import pyaudio
 from find_peak import find_peak
 from process_audio_file import process_audio_file
-from scipy.io import wavfile
+# from scipy.io import wavfile
 
 # def create_image2(filename, imgSize, dataAugmentation=False):
 
@@ -99,14 +99,15 @@ def create_image(filename, imgSize, dataAugmentation=False):
         stretch = (random.random() - 0.5) # -0.5 .. +0.5
         wStretched = max(int(img.shape[1] * (1 + stretch)), 1) # random width, but at least 1
         img = cv2.resize(img, (wStretched, img.shape[0])) # stretch horizontally by factor 0.5 .. 1.5
-    
+
     # create target image and copy sample image into it
     (wt, ht) = imgSize
     (h, w) = img.shape
     fx = w / wt
     fy = h / ht
     f = max(fx, fy)
-    newSize = (max(min(wt, int(w / f)), 1), max(min(ht, int(h / f)), 1)) # scale according to f (result at least 1 and at most wt or ht)
+    # scale according to f (result at least 1 and at most wt or ht)
+    newSize = (max(min(wt, int(w / f)), 1), max(min(ht, int(h / f)), 1)) 
     img = cv2.resize(img, newSize)
     target = np.zeros([ht, wt]) #* 255
     target[0:newSize[1], 0:newSize[0]] = img

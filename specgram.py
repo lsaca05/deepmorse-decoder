@@ -5,30 +5,33 @@ Real time Morse decoder using CNN-LSTM-CTC Tensorflow model
 adapted from https://github.com/ayared/Live-Specgram
 
 """
-import sys
-
+# Import Modules
+# import sys
 import cv2
-import matplotlib.animation as animation
+# import matplotlib.animation as animation
 import matplotlib.pyplot as plt
+import mic_read
 import numpy as np
 from fuzzysearch import find_near_matches
 
-############### Import Libraries ###############
+# Import Libraries
 from matplotlib.mlab import specgram
 from matplotlib.widgets import TextBox
 
-############### Import Modules ###############
-import mic_read
-from morse.MorseDecoder import Batch, Config, DecoderType, Model
+# from morse.MorseDecoder import Batch, Config, DecoderType, Model
+# import morse.MorseDecoder
+from morse.config import Config
+from morse.model import Model
+from morse.decoderType import DecoderType
 
-############### Constants ###############
+# Constants
 SAMPLES_PER_FRAME = 4  # Number of mic reads concatenated within a single window
 nfft = 256  # NFFT value for spectrogram
 overlap = nfft - 56  # overlap value for spectrogram
 rate = mic_read.RATE  # sampling rate
 
 
-############### Call Morse decoder ###############
+# Call Morse decoder
 def infer_image(model, img):
     if img.shape == (128, 32):
         try:
@@ -42,7 +45,7 @@ def infer_image(model, img):
     return "", "", 0.0
 
 
-############### Functions ###############
+# Functions
 """
 get_sample:
 gets the audio data from the microphone
@@ -98,15 +101,15 @@ class TextBuffer:
             if (
                 match.start + len(match.matched) < self.length
             ):  # match found but not at the end, just append
-                mybuf = self.buffer[len(string) : self.length] + string
+                mybuf = self.buffer[len(string): self.length] + string
             else:  # math found - append string and scroll
                 mybuf = (
-                    self.buffer[len(string) - len(match.matched) : match.start] + string
+                    self.buffer[len(string) - len(match.matched): match.start] + string
                 )
 
         else:  # no match, just append the string
-            mybuf = self.buffer[len(string) : self.length] + string
-        self.buffer = mybuf[0 : self.length]
+            mybuf = self.buffer[len(string): self.length] + string
+        self.buffer = mybuf[0: self.length]
         return self.buffer
 
 
@@ -118,7 +121,7 @@ buffer = TextBuffer(40)
 update_fig:
 updates the image, just adds on samples at the start until the maximum size is
 reached, at which point it 'scrolls' horizontally by determining how much of the
-data needs to stay, shifting it left, and appending the new data. 
+data needs to stay, shifting it left, and appending the new data.
 inputs: iteration number
 outputs: updated image
 """
@@ -147,7 +150,7 @@ def update_fig(n, text_box):
 
     # Create a 32x128 array centered to spectrum peak
     if f > 16:
-        img = cv2.resize(im_data[f - 16 : f + 16][0:128], (128, 32))
+        img = cv2.resize(im_data[f - 16: f + 16][0:128], (128, 32))
         if img.shape == (32, 128):
             cv2.imwrite("dummy.png", img)
 
@@ -178,10 +181,10 @@ def main():
     global pa
     global model
     global fig
-    ############### Initialize Plot ###############
+    # Initialize Plot
 
     # Load the TensorFlow model
-    config = Config("model_arrl7.yaml")
+    config = Config("configs/model_arrl6.yaml")
     model = Model(
         open(config.value("experiment.fnCharList")).read(),
         config,
@@ -217,21 +220,21 @@ def main():
     plt.gca().invert_yaxis()
     # plt.colorbar() #enable if you want to display a color bar
 
-    ############### Animate ###############
-    anim = animation.FuncAnimation(
-        fig,
-        update_fig,
-        blit=False,
-        interval=mic_read.CHUNK_SIZE / 1000,
-        fargs=(text_box,),
-    )
+    # Animate
+    # anim = animation.FuncAnimation(
+    #     fig,
+    #     update_fig,
+    #     blit=False,
+    #     interval=mic_read.CHUNK_SIZE / 1000,
+    #     fargs=(text_box,),
+    # )
 
     try:
         plt.show()
     except:
         print("Plot Closed")
 
-    ############### Terminate ###############
+    # Terminate
     stream.stop_stream()
     stream.close()
     pa.terminate()

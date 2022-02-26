@@ -13,19 +13,21 @@ See: https://github.com/githubharald/SimpleHTR
 """
 
 from __future__ import division, print_function
+import uuid
+# from find_peak import find_peak
 
 import argparse
 import datetime
 import math
 import os
 import os.path
-import random
-import sys
+# import random
+# import sys
 from os import listdir
 from os.path import isfile, join
 
 import cv2
-import editdistance
+# import editdistance
 import generate_dataset
 import matplotlib.cm as cm
 
@@ -33,8 +35,8 @@ import matplotlib.cm as cm
 # import yaml                       # Config
 # from functools import reduce      # Config
 import matplotlib.pyplot as plt
-import numpy as np
-import scipy as sp
+# import numpy as np
+# import scipy as sp
 import tensorflow as tf
 from batch import Batch
 from config import Config
@@ -44,12 +46,12 @@ from generate_dataset import generate_dataset
 from image import create_image
 from model import Model
 from morseDataset import MorseDataset
-from numpy.random import normal
+# from numpy.random import normal
 
 # Read WAV file containing Morse code and create 256x1 (or 16x16) tiles (256 samples/4 seconds)
-from scipy.io import wavfile
-from scipy.io.wavfile import write
-from scipy.signal import butter, filtfilt, periodogram
+# from scipy.io import wavfile
+# from scipy.io.wavfile import write
+# from scipy.signal import butter, filtfilt, periodogram
 from train import train
 from validate import validate
 
@@ -111,9 +113,6 @@ def infer(model, fnImg):
     print(recognized)
 
 
-# from pyAudioAnalysis.audioSegmentation import silence_removal
-
-
 def infer_image(model, o):
     im = o[0::1].reshape(1, 256)
     im = im * 256.0
@@ -125,50 +124,51 @@ def infer_image(model, o):
     (recognized, probability) = model.inferBatch(batch, True)
     return fname, recognized, probability
 
+# from pyAudioAnalysis.audioSegmentation import silence_removal
+# deprecated, part of --experiment
+# def infer_file(model, fname):
+#     print(f"SILENCE REMOVAL:{remove_silence}")
+#     if remove_silence:
+#         print()
+#         tone = find_peak(fname)
+#         [Fs, x] = wavfile.read(fname)
+#         segments = silence_removal(x, Fs, 0.25, 0.05, 0.2, 0.2, False)
+#         for start, stop in segments:
+#             print("*" * 80, f"start:{start}, stop:{stop} dur:{stop-start}")
+#             o, dur = process_audio_file2(fname, start, stop, tone)
+#             start_time = datetime.datetime.now()
+#             iname, recognized, probability = infer_image(model, o[0:256])
+#             stop_time = datetime.datetime.now()
+#             if True:  # probability[0] > 0.00005:
+#                 print(f"File:{iname}")
+#                 print("Recognized:", '"' + recognized[0] + '"')
+#                 print("Probability:", probability[0])
+#                 print("Duration:{}".format(stop_time - start_time))
+#         return
+#     else:
+#         sample = 4.0
+#         start = 0.0
+#         tone = find_peak(fname)
+#         o, dur = process_audio_file(fname, start, sample, tone)
+#         while start < (dur - sample):
+#             print(start, dur)
+#             im = o[0::1].reshape(1, 256)
+#             im = im * 256.0
+#             img = cv2.resize(im, model.imgSize, interpolation=cv2.INTER_AREA)
+#             cv2.imwrite(f"dummy{start}.png", img)
 
-def infer_file(model, fname):
-    print(f"SILENCE REMOVAL:{remove_silence}")
-    if remove_silence:
-        print()
-        tone = find_peak(fname)
-        [Fs, x] = wavfile.read(fname)
-        segments = silence_removal(x, Fs, 0.25, 0.05, 0.2, 0.2, False)
-        for start, stop in segments:
-            print("*" * 80, f"start:{start}, stop:{stop} dur:{stop-start}")
-            o, dur = process_audio_file2(fname, start, stop, tone)
-            start_time = datetime.datetime.now()
-            iname, recognized, probability = infer_image(model, o[0:256])
-            stop_time = datetime.datetime.now()
-            if True:  # probability[0] > 0.00005:
-                print(f"File:{iname}")
-                print("Recognized:", '"' + recognized[0] + '"')
-                print("Probability:", probability[0])
-                print("Duration:{}".format(stop_time - start_time))
-        return
-    else:
-        sample = 4.0
-        start = 0.0
-        tone = find_peak(fname)
-        o, dur = process_audio_file(fname, start, sample, tone)
-        while start < (dur - sample):
-            print(start, dur)
-            im = o[0::1].reshape(1, 256)
-            im = im * 256.0
-            img = cv2.resize(im, model.imgSize, interpolation=cv2.INTER_AREA)
-            cv2.imwrite(f"dummy{start}.png", img)
+#             img = cv2.transpose(img)
 
-            img = cv2.transpose(img)
-
-            batch = Batch(None, [img])
-            start_time = datetime.datetime.now()
-            (recognized, probability) = model.inferBatch(batch, True)
-            stop_time = datetime.datetime.now()
-            if probability[0] > 0.0000:
-                print("Recognized:", '"' + recognized[0] + '"')
-                print("Probability:", probability[0])
-                print("Duration:{}".format(stop_time - start_time))
-            start += 1.0 / 1
-            o, dur = process_audio_file(fname, start, sample, tone)
+#             batch = Batch(None, [img])
+#             start_time = datetime.datetime.now()
+#             (recognized, probability) = model.inferBatch(batch, True)
+#             stop_time = datetime.datetime.now()
+#             if probability[0] > 0.0000:
+#                 print("Recognized:", '"' + recognized[0] + '"')
+#                 print("Probability:", probability[0])
+#                 print("Duration:{}".format(stop_time - start_time))
+#             start += 1.0 / 1
+#             o, dur = process_audio_file(fname, start, sample, tone)
 
 
 def main():
@@ -181,7 +181,11 @@ def main():
     parser.add_argument("--train", help="train the NN", action="store_true")
     parser.add_argument("--validate", help="validate the NN", action="store_true")
     # parser.add_argument("--beamsearch", help="use beam search instead of best path decoding", action="store_true")
-    # parser.add_argument("--wordbeamsearch", help="use word beam search instead of best path decoding", action="store_true")
+    # parser.add_argument(
+    # "--wordbeamsearch",
+    # help="use word beam search instead of best path decoding",
+    # action="store_true"
+    # )
     parser.add_argument(
         "--generate",
         help="generate a Morse dataset of random words",

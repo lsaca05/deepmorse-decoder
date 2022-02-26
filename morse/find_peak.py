@@ -1,4 +1,5 @@
 import sys
+from matplotlib.pyplot import axes
 
 from numpy import Inf, NaN, arange, array, asarray, isscalar
 from scipy.io import wavfile
@@ -84,11 +85,12 @@ def find_peak(fname):
     f, s = periodogram(x, Fs, "blackman", 8192, "linear", False, scaling="spectrum")
     threshold = max(s) * 0.8  # only 0.4 ... 1.0 of max value freq peaks included
     maxtab, mintab = peakdet(
-        abs(s[0 : int(len(s) / 2 - 1)]), threshold, f[0 : int(len(f) / 2 - 1)]
+        abs(s[0: int(len(s) / 2 - 1)]), threshold, f[0: int(len(f) / 2 - 1)]
     )
     try:
         val = maxtab[0, 0]
-    except:
+    # specify exception if possible
+    except not maxtab:
         print("Error: {}".format(maxtab))
         val = 600.0
     return val

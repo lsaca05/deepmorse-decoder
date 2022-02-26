@@ -28,7 +28,8 @@ class MorseDataset:
         print(f"MorseDataset: loading {config.value('morse.fnTrain')}")
         f = open(config.value("morse.fnTrain"), "r")
         chars = set()
-        bad_samples = []
+        # deprecated
+        # bad_samples = []
 
         # read all lines in the file
         for line in f:
@@ -122,6 +123,11 @@ class MorseDataset:
             create_image(self.samples[i].filePath, self.imgSize, self.dataAugmentation)
             for i in batchRange
         ]
-        # imgs = [preprocess(cv2.imread(self.samples[i].filePath, cv2.IMREAD_GRAYSCALE), self.imgSize, self.dataAugmentation) for i in batchRange]
+        # imgs = [preprocess(cv2.imread(
+            #   self.samples[i].filePath, 
+            #   cv2.IMREAD_GRAYSCALE), 
+            #   self.imgSize, 
+            #   self.dataAugmentation) 
+        #   for i in batchRange]
         self.currIdx += self.batchSize
         return Batch(gtTexts, imgs)

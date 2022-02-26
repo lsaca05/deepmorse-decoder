@@ -1,5 +1,7 @@
 from functools import reduce
+
 import yaml
+
 
 class Config:
     def __init__(self, file_name):

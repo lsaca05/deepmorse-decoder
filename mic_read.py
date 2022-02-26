@@ -56,7 +56,7 @@ def get_data(stream, pa):
     return data
 
 
-############### Test Functions ###############
+# Test Functions
 """
 make_10k:
 creates a 10kHz test tone

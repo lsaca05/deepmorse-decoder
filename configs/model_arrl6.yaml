@@ -1,7 +1,7 @@
 model:
   # model constants
   directory: "Volumes/Elements/model-arrl6"
-  name: "model-arrl6/"
+  name: "models/model-arrl6/"
   batchSize: 100
   imgSize: !!python/tuple [128, 32]
   maxTextLen: 32

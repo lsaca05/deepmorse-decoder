@@ -2,7 +2,7 @@ import sys
 
 import numpy as np
 import tensorflow as tf
-from decoderType import DecoderType
+from morse.decoderType import DecoderType
 
 
 class Model:
@@ -196,7 +196,13 @@ class Model:
 
         # sequence length becomes label length and logit length, label length is none if labels is SparseTensor
         # if TF2 is True:
-        # self.loss = tf.reduce_mean(tf.nn.ctc_loss(labels=self.gtTexts, logits=self.ctcIn3dTBC, label_length=None, logit_length=self.seqLen, blank_index=???))
+        # self.loss = tf.reduce_mean(
+            # tf.nn.ctc_loss(
+            # labels=self.gtTexts,
+            # logits=self.ctcIn3dTBC,
+            # label_length=None,
+            # logit_length=self.seqLen,
+            # blank_index=???))
         # else:
         self.loss = tf.reduce_mean(
             tf.compat.v1.nn.ctc_loss(
@@ -220,7 +226,12 @@ class Model:
             )
 
         # if TF2 is True:
-        #     self.lossPerElement = tf.nn.ctc_loss(labels=self.gtTexts, logits=self.savedCtcInput, label_length=None, logit_length=self.seqLen, blank_index=???)
+        #     self.lossPerElement = tf.nn.ctc_loss(
+                # labels=self.gtTexts,
+                # logits=self.savedCtcInput,
+                # label_length=None,
+                # logit_length=self.seqLen,
+                # blank_index=???)
         # else:
         self.lossPerElement = tf.compat.v1.nn.ctc_loss(
             labels=self.gtTexts,
@@ -247,7 +258,8 @@ class Model:
                     merge_repeated=False,
                 )
         elif self.decoderType == DecoderType.WordBeamSearch:
-            # import compiled word beam search operation (see https://github.com/githubharald/CTCWordBeamSearch)
+            # import compiled word beam search operation 
+            # (see https://github.com/githubharald/CTCWordBeamSearch)
             print("Loading WordBeamSearch...")
             # word_beam_search_module = tf.load_op_library('cpp/proj/TFWordBeamSearch.so')
             from word_beam_search import WordBeamSearch
@@ -261,9 +273,17 @@ class Model:
             )
             corpus = open("Volumes/Elements/" + self.modelDir + "corpus.txt").read()
 
-            # TODO --  needs rewriting since imported library has changed, this or the SparseTensor/Keras TODO. Eager execution preferred.
+            # TODO --  rewrite since imported library has changed, this or the SparseTensor/Keras TODO
             # decode using the "Words" mode of word beam search
-            # self.decoder = word_beam_search_module.word_beam_search(tf.nn.softmax(self.ctcIn3dTBC, axis=2), 50, 'Words', 0.0, corpus.encode('utf8'), chars.encode('utf8'), wordChars.encode('utf8'))
+            # self.decoder = word_beam_search_module.word_beam_search(
+                # tf.nn.softmax(self.ctcIn3dTBC, axis=2), 
+                # 50, 
+                # 'Words', 
+                # 0.0, 
+                # corpus.encode('utf8'), 
+                # chars.encode('utf8'), 
+                # wordChars.encode('utf8')
+            # )
             wbs = WordBeamSearch(
                 50,
                 "Words",
@@ -345,7 +365,8 @@ class Model:
             decoded = ctcOutput[0][0]
 
             # go over all indices and save mapping: batch -> values
-            idxDict = {b: [] for b in range(batchSize)}
+            # TODO -- deprecated, investigate
+            # idxDict = {b: [] for b in range(batchSize)}
             for (idx, idx2d) in enumerate(decoded.indices):
                 label = decoded.values[idx]
                 batchElement = idx2d[0]  # index according to [b,t]

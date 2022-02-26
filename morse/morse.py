@@ -42,7 +42,8 @@ def morse(
     #   morse('How are you doing my friend?','morsecode.wav'),
     #   morse('How are you doing my friend?','morsecode.wav', 20),
     #   morse('How are you doing my friend?','morsecode.wav', 10, 440,Fs,20),
-    #   x = morse('How are you doing my friend?','morsecode.wav', 3, 440,Fs, 20, 2^20,True), #(to play the file, and make the length 2^20)
+    #   (to play the file, and make the length 2^20)
+    #   x = morse('How are you doing my friend?','morsecode.wav', 3, 440,Fs, 20, 2^20,True), 
     #
     #   Copyright 2018 Mauri Niininen, AG1LE
     """
@@ -70,7 +71,7 @@ def morse(
     # Dah = np.concatenate((Dit,Dit,Dit))
     Dah = np.sin(2 * np.pi * f_code * t2)
 
-    lsp = (np.zeros(len(Dah)),)  # changed size argument to function of Dah
+    # lsp = (np.zeros(len(Dah)),)  # changed size argument to function of Dah
 
     # Defining Characters & Numbers
     Codebook = {
