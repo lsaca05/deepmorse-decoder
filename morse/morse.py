@@ -43,7 +43,7 @@ def morse(
     #   morse('How are you doing my friend?','morsecode.wav', 20),
     #   morse('How are you doing my friend?','morsecode.wav', 10, 440,Fs,20),
     #   (to play the file, and make the length 2^20)
-    #   x = morse('How are you doing my friend?','morsecode.wav', 3, 440,Fs, 20, 2^20,True), 
+    #   x = morse('How are you doing my friend?','morsecode.wav', 3, 440,Fs, 20, 2^20,True),
     #
     #   Copyright 2018 Mauri Niininen, AG1LE
     """

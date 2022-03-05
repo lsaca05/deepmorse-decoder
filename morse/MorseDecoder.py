@@ -14,6 +14,7 @@ See: https://github.com/githubharald/SimpleHTR
 
 from __future__ import division, print_function
 import uuid
+
 # from find_peak import find_peak
 
 import argparse
@@ -21,12 +22,14 @@ import datetime
 import math
 import os
 import os.path
+
 # import random
 # import sys
 from os import listdir
 from os.path import isfile, join
 
 import cv2
+
 # import editdistance
 import generate_dataset
 import matplotlib.cm as cm
@@ -35,6 +38,7 @@ import matplotlib.cm as cm
 # import yaml                       # Config
 # from functools import reduce      # Config
 import matplotlib.pyplot as plt
+
 # import numpy as np
 # import scipy as sp
 import tensorflow as tf
@@ -46,6 +50,7 @@ from generate_dataset import generate_dataset
 from image import create_image
 from model import Model
 from morseDataset import MorseDataset
+
 # from numpy.random import normal
 
 # Read WAV file containing Morse code and create 256x1 (or 16x16) tiles (256 samples/4 seconds)
@@ -123,6 +128,7 @@ def infer_image(model, o):
     batch = Batch(None, [img])
     (recognized, probability) = model.inferBatch(batch, True)
     return fname, recognized, probability
+
 
 # from pyAudioAnalysis.audioSegmentation import silence_removal
 # deprecated, part of --experiment

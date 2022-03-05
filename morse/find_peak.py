@@ -85,7 +85,7 @@ def find_peak(fname):
     f, s = periodogram(x, Fs, "blackman", 8192, "linear", False, scaling="spectrum")
     threshold = max(s) * 0.8  # only 0.4 ... 1.0 of max value freq peaks included
     maxtab, mintab = peakdet(
-        abs(s[0: int(len(s) / 2 - 1)]), threshold, f[0: int(len(f) / 2 - 1)]
+        abs(s[0 : int(len(s) / 2 - 1)]), threshold, f[0 : int(len(f) / 2 - 1)]
     )
     try:
         val = maxtab[0, 0]

@@ -2,7 +2,7 @@ import sys
 
 import numpy as np
 import tensorflow as tf
-from morse.decoderType import DecoderType
+from decoderType import DecoderType
 
 
 class Model:
@@ -227,11 +227,11 @@ class Model:
 
         # if TF2 is True:
         #     self.lossPerElement = tf.nn.ctc_loss(
-                # labels=self.gtTexts,
-                # logits=self.savedCtcInput,
-                # label_length=None,
-                # logit_length=self.seqLen,
-                # blank_index=???)
+        #       labels=self.gtTexts,
+        #       logits=self.savedCtcInput,
+        #       label_length=None,
+        #       logit_length=self.seqLen,
+        #       blank_index=???)
         # else:
         self.lossPerElement = tf.compat.v1.nn.ctc_loss(
             labels=self.gtTexts,
@@ -276,13 +276,13 @@ class Model:
             # TODO --  rewrite since imported library has changed, this or the SparseTensor/Keras TODO
             # decode using the "Words" mode of word beam search
             # self.decoder = word_beam_search_module.word_beam_search(
-                # tf.nn.softmax(self.ctcIn3dTBC, axis=2), 
-                # 50, 
-                # 'Words', 
-                # 0.0, 
-                # corpus.encode('utf8'), 
-                # chars.encode('utf8'), 
-                # wordChars.encode('utf8')
+            #   tf.nn.softmax(self.ctcIn3dTBC, axis=2), 
+            #   50, 
+            #   'Words', 
+            #   0.0, 
+            #   corpus.encode('utf8'), 
+            #   chars.encode('utf8'), 
+            #   wordChars.encode('utf8')
             # )
             wbs = WordBeamSearch(
                 50,

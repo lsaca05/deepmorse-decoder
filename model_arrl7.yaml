@@ -3,16 +3,16 @@ model:
   directory: "Volumes/Elements/model-arrl7"
   name: "models/model-arrl7/"
   batchSize: 100
-  imgSize: !!python/tuple [128, 32]
+  imgSize: !!python/tuple [128, 1]  # any reason for height >1? frequency? 1 doesn't work
   maxTextLen: 32
   earlyStopping: 10
   corpus: "arrl_corpus.txt"
-  split: 0.70 # 70% training - 30% validation
+  split: 0.70  # 70% training - 30% validation
   numTrainSamplesPerEpoch: 5000
 
 morse:
-  fnTrain: "Volumes/Elements/model-arrl3/morsewords.txt"
-  fnAudio: "Volumes/Elements/model-arrl3/"
+  fnTrain: "Volumes/Elements/model-arrl7/morsewords.txt"
+  fnAudio: "Volumes/Elements/model-arrl7/"
   count: 25000
   SNR_dB:
     - 40

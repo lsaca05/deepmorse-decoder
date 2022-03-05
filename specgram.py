@@ -8,7 +8,7 @@ adapted from https://github.com/ayared/Live-Specgram
 # Import Modules
 # import sys
 import cv2
-# import matplotlib.animation as animation
+import matplotlib.animation as animation
 import matplotlib.pyplot as plt
 import mic_read
 import numpy as np
@@ -23,6 +23,7 @@ from matplotlib.widgets import TextBox
 from morse.config import Config
 from morse.model import Model
 from morse.decoderType import DecoderType
+from morse.batch import Batch
 
 # Constants
 SAMPLES_PER_FRAME = 4  # Number of mic reads concatenated within a single window
@@ -101,15 +102,15 @@ class TextBuffer:
             if (
                 match.start + len(match.matched) < self.length
             ):  # match found but not at the end, just append
-                mybuf = self.buffer[len(string): self.length] + string
+                mybuf = self.buffer[len(string) : self.length] + string
             else:  # math found - append string and scroll
                 mybuf = (
-                    self.buffer[len(string) - len(match.matched): match.start] + string
+                    self.buffer[len(string) - len(match.matched) : match.start] + string
                 )
 
         else:  # no match, just append the string
-            mybuf = self.buffer[len(string): self.length] + string
-        self.buffer = mybuf[0: self.length]
+            mybuf = self.buffer[len(string) : self.length] + string
+        self.buffer = mybuf[0 : self.length]
         return self.buffer
 
 
@@ -150,7 +151,7 @@ def update_fig(n, text_box):
 
     # Create a 32x128 array centered to spectrum peak
     if f > 16:
-        img = cv2.resize(im_data[f - 16: f + 16][0:128], (128, 32))
+        img = cv2.resize(im_data[f - 16 : f + 16][0:128], (128, 32))
         if img.shape == (32, 128):
             cv2.imwrite("dummy.png", img)
 
@@ -184,7 +185,7 @@ def main():
     # Initialize Plot
 
     # Load the TensorFlow model
-    config = Config("configs/model_arrl6.yaml")
+    config = Config("model_arrl7.yaml")
     model = Model(
         open(config.value("experiment.fnCharList")).read(),
         config,
@@ -221,13 +222,13 @@ def main():
     # plt.colorbar() #enable if you want to display a color bar
 
     # Animate
-    # anim = animation.FuncAnimation(
-    #     fig,
-    #     update_fig,
-    #     blit=False,
-    #     interval=mic_read.CHUNK_SIZE / 1000,
-    #     fargs=(text_box,),
-    # )
+    anim = animation.FuncAnimation(
+        fig,
+        update_fig,
+        blit=False,
+        interval=mic_read.CHUNK_SIZE / 1000,
+        fargs=(text_box,),
+    )
 
     try:
         plt.show()

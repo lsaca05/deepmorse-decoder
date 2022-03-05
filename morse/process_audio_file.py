@@ -30,17 +30,17 @@ def demodulate(x, Fs, freq):
 
 
 def process_audio_file(fname, x, y, tone):
-    """return demodulated clip from audiofile from x to y seconds at tone frequency,  
+    """return demodulated clip from audiofile from x to y seconds at tone frequency,
         as well as duration of audio file in seconds"""
     Fs, signal = wavfile.read(fname)
     dur = len(signal) / Fs
-    o = demodulate(signal[int(Fs * (x)): int(Fs * (x + y))], Fs, tone)
+    o = demodulate(signal[int(Fs * (x)) : int(Fs * (x + y))], Fs, tone)
     # print("Fs:{} total duration:{} sec start at:{} seconds, get first {} seconds".format(Fs, dur,x,y))
     return o, dur
 
 
 def process_audio_file2(fname, x, y, tone):
-    """return demodulated clip from audiofile from x to y seconds at tone frequency,  
+    """return demodulated clip from audiofile from x to y seconds at tone frequency,
         as well as duration of audio file in seconds"""
     Fs, signal = wavfile.read(fname)
     dur = len(signal) / Fs
@@ -54,6 +54,6 @@ def process_audio_file2(fname, x, y, tone):
         signal = np.insert(signal, slice(yi, ei), pad)
         y = end
 
-    o = demodulate(signal[int(Fs * (x)): int(Fs * (x + y))], Fs, tone)
+    o = demodulate(signal[int(Fs * (x)) : int(Fs * (x + y))], Fs, tone)
     # print("Fs:{} total duration:{} sec start at:{} seconds, get first {} seconds".format(Fs, dur,x,y))
     return o, dur

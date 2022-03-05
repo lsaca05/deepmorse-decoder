@@ -12,7 +12,6 @@ from morse import morse
 # import requests
 
 
-
 def generate_dataset(config):
     "generate audio dataset from a dictionary of random words"
     # URL = "https://svnweb.freebsd.org/csrg/share/dict/words?view=co&content-type=text/plain"
