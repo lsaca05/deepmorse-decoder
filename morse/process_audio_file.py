@@ -24,14 +24,15 @@ def demodulate(x, Fs, freq):
     z = filtfilt(b, a, abs(mixed))
 
     decimate = int(Fs / 64)  # 8000 Hz / 64 = 125 Hz => 8 msec / sample
-    Ts = 1000.0 * decimate / float(Fs)
+    # TODO - delete or figure out what this is supposed to do
+    # Ts = 1000.0 * decimate / float(Fs)
     o = z[0::decimate] / max(z)
     return o
 
 
 def process_audio_file(fname, x, y, tone):
     """return demodulated clip from audiofile from x to y seconds at tone frequency,
-        as well as duration of audio file in seconds"""
+    as well as duration of audio file in seconds"""
     Fs, signal = wavfile.read(fname)
     dur = len(signal) / Fs
     o = demodulate(signal[int(Fs * (x)) : int(Fs * (x + y))], Fs, tone)
@@ -41,7 +42,7 @@ def process_audio_file(fname, x, y, tone):
 
 def process_audio_file2(fname, x, y, tone):
     """return demodulated clip from audiofile from x to y seconds at tone frequency,
-        as well as duration of audio file in seconds"""
+    as well as duration of audio file in seconds"""
     Fs, signal = wavfile.read(fname)
     dur = len(signal) / Fs
     if y - x < 4.0:

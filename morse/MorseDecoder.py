@@ -19,7 +19,7 @@ import uuid
 
 import argparse
 import datetime
-import math
+# import math
 import os
 import os.path
 
@@ -31,7 +31,6 @@ from os.path import isfile, join
 import cv2
 
 # import editdistance
-import generate_dataset
 import matplotlib.cm as cm
 
 # from morse import Morse
@@ -306,7 +305,8 @@ def main():
             mustRestore=True,
         )
         print("Loading model took:{}".format(datetime.datetime.now() - start_time))
-        infer_file(model, args.filename)
+        # deprecated
+        # infer_file(model, args.filename)
 
 
 if __name__ == "__main__":

@@ -9,8 +9,6 @@ Dependencies: pyaudio, numpy and matplotlib
 """
 import matplotlib.pyplot as plt
 import numpy as np
-
-# Import Libraries
 import pyaudio
 
 # Constants

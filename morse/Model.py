@@ -197,12 +197,12 @@ class Model:
         # sequence length becomes label length and logit length, label length is none if labels is SparseTensor
         # if TF2 is True:
         # self.loss = tf.reduce_mean(
-            # tf.nn.ctc_loss(
-            # labels=self.gtTexts,
-            # logits=self.ctcIn3dTBC,
-            # label_length=None,
-            # logit_length=self.seqLen,
-            # blank_index=???))
+        #   tf.nn.ctc_loss(
+        #   labels=self.gtTexts,
+        #   logits=self.ctcIn3dTBC,
+        #   label_length=None,
+        #   logit_length=self.seqLen,
+        #   blank_index=???))
         # else:
         self.loss = tf.reduce_mean(
             tf.compat.v1.nn.ctc_loss(
@@ -258,7 +258,7 @@ class Model:
                     merge_repeated=False,
                 )
         elif self.decoderType == DecoderType.WordBeamSearch:
-            # import compiled word beam search operation 
+            # import compiled word beam search operation
             # (see https://github.com/githubharald/CTCWordBeamSearch)
             print("Loading WordBeamSearch...")
             # word_beam_search_module = tf.load_op_library('cpp/proj/TFWordBeamSearch.so')
@@ -276,12 +276,12 @@ class Model:
             # TODO --  rewrite since imported library has changed, this or the SparseTensor/Keras TODO
             # decode using the "Words" mode of word beam search
             # self.decoder = word_beam_search_module.word_beam_search(
-            #   tf.nn.softmax(self.ctcIn3dTBC, axis=2), 
-            #   50, 
-            #   'Words', 
-            #   0.0, 
-            #   corpus.encode('utf8'), 
-            #   chars.encode('utf8'), 
+            #   tf.nn.softmax(self.ctcIn3dTBC, axis=2),
+            #   50,
+            #   'Words',
+            #   0.0,
+            #   corpus.encode('utf8'),
+            #   chars.encode('utf8'),
             #   wordChars.encode('utf8')
             # )
             wbs = WordBeamSearch(

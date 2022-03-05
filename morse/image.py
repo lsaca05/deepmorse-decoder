@@ -109,7 +109,7 @@ def create_image(filename, imgSize, dataAugmentation=False):
     fy = h / ht
     f = max(fx, fy)
     # scale according to f (result at least 1 and at most wt or ht)
-    newSize = (max(min(wt, int(w / f)), 1), max(min(ht, int(h / f)), 1)) 
+    newSize = (max(min(wt, int(w / f)), 1), max(min(ht, int(h / f)), 1))
     img = cv2.resize(img, newSize)
     target = np.zeros([ht, wt]) #* 255
     target[0:newSize[1], 0:newSize[0]] = img
