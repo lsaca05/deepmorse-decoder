@@ -1,0 +1,2 @@
+[pylint]
+disable=not-callable  ; 1 false positive from using morse function

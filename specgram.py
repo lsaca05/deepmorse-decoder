@@ -18,12 +18,12 @@ from fuzzysearch import find_near_matches
 from matplotlib.mlab import specgram
 from matplotlib.widgets import TextBox
 
+from morse.batch import Batch
 # from morse.MorseDecoder import Batch, Config, DecoderType, Model
 # import morse.MorseDecoder
 from morse.config import Config
-from morse.model import Model
 from morse.decoderType import DecoderType
-from morse.batch import Batch
+from morse.model import Model
 
 # Constants
 SAMPLES_PER_FRAME = 4  # Number of mic reads concatenated within a single window
@@ -222,7 +222,8 @@ def main():
     # plt.colorbar() #enable if you want to display a color bar
 
     # Animate
-    anim = animation.FuncAnimation(
+    # anim = 
+    animation.FuncAnimation(
         fig,
         update_fig,
         blit=False,

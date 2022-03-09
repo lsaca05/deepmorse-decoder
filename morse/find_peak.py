@@ -1,5 +1,4 @@
 import sys
-from matplotlib.pyplot import axes
 
 from numpy import Inf, NaN, arange, array, asarray, isscalar
 from scipy.io import wavfile
@@ -90,7 +89,7 @@ def find_peak(fname):
     try:
         val = maxtab[0, 0]
     # specify exception if possible
-    except not maxtab:
+    except:
         print("Error: {}".format(maxtab))
         val = 600.0
     return val

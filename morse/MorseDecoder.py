@@ -19,6 +19,7 @@ import uuid
 
 import argparse
 import datetime
+
 # import math
 import os
 import os.path
@@ -292,7 +293,7 @@ def main():
     # infer text on test audio file
     else:
         if args.silence:
-            print(f"SILENCE REMOVAL ON")
+            print("SILENCE REMOVAL ON")
             remove_silence = True
         config = Config("model_arrl7.yaml")
         print("*" * 80)

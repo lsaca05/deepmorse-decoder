@@ -1,9 +1,10 @@
+---
 model:
   # model constants
   directory: "Volumes/Elements/model-arrl7"
   name: "models/model-arrl7/"
   batchSize: 100
-  imgSize: !!python/tuple [128, 1]  # any reason for height >1? frequency? 1 doesn't work
+  imgSize: !!python/tuple [128, 32]  # Reduce height if possible?
   maxTextLen: 32
   earlyStopping: 10
   corpus: "arrl_corpus.txt"
