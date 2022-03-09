@@ -17,7 +17,6 @@ from fuzzysearch import find_near_matches
 # Import Libraries
 from matplotlib.mlab import specgram
 from matplotlib.widgets import TextBox
-
 from morse.batch import Batch
 # from morse.MorseDecoder import Batch, Config, DecoderType, Model
 # import morse.MorseDecoder
@@ -222,7 +221,6 @@ def main():
     # plt.colorbar() #enable if you want to display a color bar
 
     # Animate
-    # anim = 
     animation.FuncAnimation(
         fig,
         update_fig,

@@ -41,7 +41,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
         with:
-          # Full git history needed to get proper changed files within `super-linter`
+          # Full git history to get proper changed files in `super-linter`
           fetch-depth: 0
 
       ################################
