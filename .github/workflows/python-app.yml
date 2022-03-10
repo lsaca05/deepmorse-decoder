@@ -19,6 +19,7 @@ jobs:
           pip install pytest
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           # https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio
+          pip install custom_py_libs/PyAudio-0.2.11-cp39-cp39-win_amd64.whl
       - name: Test with pytest
         run: |
           pytest
