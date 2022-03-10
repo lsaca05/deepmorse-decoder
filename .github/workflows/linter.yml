@@ -58,3 +58,5 @@ jobs:
           PYTHON_FLAKE8_CONFIG_FILE: .flake8
           PYTHON_PYLINT_CONFIG_FILE: .pylintrc
           PYTHON_ISORT_CONFIG_FILE: .pyproject.toml
+          VALIDATE_PYTHON_PYLINT: false
+          LINTER_RULES_PATH: .
