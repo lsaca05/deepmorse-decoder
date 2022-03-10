@@ -4,7 +4,7 @@ model:
   directory: "Volumes/Elements/model-arrl7"
   name: "models/model-arrl7/"
   batchSize: 100
-  imgSize: !!python/tuple [128, 32]  # Reduce height if possible?
+  imgSize: !!python/tuple [128, 1]  # Reduce height if possible?
   maxTextLen: 32
   earlyStopping: 10
   corpus: "arrl_corpus.txt"

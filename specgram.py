@@ -10,13 +10,13 @@ adapted from https://github.com/ayared/Live-Specgram
 import cv2
 import matplotlib.animation as animation
 import matplotlib.pyplot as plt
-import mic_read
 import numpy as np
 from fuzzysearch import find_near_matches
-
 # Import Libraries
 from matplotlib.mlab import specgram
 from matplotlib.widgets import TextBox
+
+import mic_read
 from morse.batch import Batch
 # from morse.MorseDecoder import Batch, Config, DecoderType, Model
 # import morse.MorseDecoder

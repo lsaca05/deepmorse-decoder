@@ -1,4 +1,4 @@
 [flake8]
 exclude=venv,configs
 max-line-length=120
-ignore=E203,E722  ; conflicting standard of space before ':'
+ignore=E203,E722,W503
