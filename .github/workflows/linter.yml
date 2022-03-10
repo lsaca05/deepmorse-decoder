@@ -54,3 +54,7 @@ jobs:
           continue-on-error: true
           DEFAULT_BRANCH: master
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          YAML_CONFIG_FILE: .yamllint.yml
+          PYTHON_FLAKE8_CONFIG_FILE: .flake8
+          PYTHON_PYLINT_CONFIG_FILE: .pylintrc
+          PYTHON_ISORT_CONFIG_FILE: .pyproject.toml
