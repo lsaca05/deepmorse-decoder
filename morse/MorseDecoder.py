@@ -19,6 +19,9 @@ import datetime
 import os
 import os.path
 import uuid
+from os import listdir
+from os.path import isfile, join
+
 import cv2
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
@@ -31,13 +34,10 @@ from generate_dataset import generate_dataset
 from image import create_image
 from model import Model
 from morseDataset import MorseDataset
-from os import listdir
-from os.path import isfile, join
 
 # Read WAV file containing Morse code and create 256x1 (or 16x16) tiles (256 samples/4 seconds)
 from train import train
 from validate import validate
-
 
 # Read morse.wav from start_time=0 duration=4 seconds
 # save demodulated/decimated signal (1,256) to morse.npy
