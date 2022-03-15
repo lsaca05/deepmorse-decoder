@@ -3,6 +3,7 @@ import random
 import numpy as np
 from morseCode import MorseCode
 from scipy.io.wavfile import write
+# import sounddevice as sd
 
 
 def morse(
@@ -218,15 +219,12 @@ def morse(
 
     # Normalize before saving
     max_n = (max(morsecode),)
-    if max_n == (0.0,):
-        print(max_n)
-        print(morsecode)
-        print("Sample: " + text + "~end~")
     morsecode = morsecode / max_n
 
     if file_name:
         # TODO - Cannot write "?","/" to file
-        write(file_name, Fs, morsecode)
+        # write(file_name, Fs, morsecode)
+        write(file_name, Fs, morsecode.astype(np.int16))
     if play_sound:
         # TODO - Is this necessary? No include anywhere for "sd"
         # sd.play(morsecode, Fs)
