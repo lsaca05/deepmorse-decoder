@@ -223,8 +223,8 @@ def morse(
 
     if file_name:
         # TODO - Cannot write "?","/" to file
-        # write(file_name, Fs, morsecode)
-        write(file_name, Fs, morsecode.astype(np.int16))
+        write(file_name, Fs, morsecode)
+        # write(file_name, Fs, morsecode.astype(np.int16))
     if play_sound:
         # TODO - Is this necessary? No include anywhere for "sd"
         # sd.play(morsecode, Fs)
