@@ -29,7 +29,7 @@ def generate_dataset(config):
     print("SNR_DB:{}".format(SNR_DB))
     # rv = requests.get(URL, headers=hdr)
     # rv = open("morse/samples.txt").read()
-    file = open("morse/weighted_samples.txt").read()
+    file = open("morse/samples_weighted.txt").read()
     # if rv.status_code == 200:
     #     try:
     #         os.makedirs(filePath)

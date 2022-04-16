@@ -25,3 +25,9 @@ jobs:
       - name: Test with pytest
         run: |
           pytest
+      - name: Generate data
+        run: |
+          python morse/MorseDecoder.py --generate
+      - name: Train neural network
+        run: |
+          python morse/MorseDecoder.py --train

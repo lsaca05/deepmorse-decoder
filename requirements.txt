@@ -9,4 +9,4 @@ tensorflow==2.8.0
 
 # custom file dependencies (see README)
 # word_beam_search==1.0.1
-# PyAudio
+# PyAudio==0.2.11
