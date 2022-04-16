@@ -19,11 +19,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install pytest
           # sudo apt-get install portaudio19-dev python-pyaudio
-<<<<<<< HEAD
-          pip install -r requirements.txt
-=======
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
->>>>>>> 7e7199e3773362add726dbccfa138a733d843c44
           # https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio
           pip install custom_py_libs/PyAudio-0.2.11-cp39-cp39-win_amd64.whl
       - name: Test with pytest
