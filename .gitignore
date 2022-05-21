@@ -131,3 +131,7 @@ dmypy.json
 
 # generated data
 Volumes/
+morse/*.txt
+
+# new code (WIP)
+new/

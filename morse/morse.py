@@ -219,14 +219,15 @@ def morse(
 
     # Normalize before saving
     max_n = (max(morsecode),)
-    morsecode = morsecode / max_n
+    morsecode = morsecode * max_n * 10000
 
     if file_name:
         # TODO - Cannot write "?","/" to file
-        write(file_name, Fs, morsecode)
-        # write(file_name, Fs, morsecode.astype(np.int16))
+        # write(file_name, Fs, morsecode)
+        write(file_name, Fs, morsecode.astype(np.int16))
     if play_sound:
         # TODO - Is this necessary? No include anywhere for "sd"
         # sd.play(morsecode, Fs)
         pass
+    print(morsecode)
     return morsecode

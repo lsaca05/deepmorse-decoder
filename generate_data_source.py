@@ -1,64 +1,28 @@
 import random
 
-# import string
-
-file = open("morse/weighted_samples.txt", "w")
+file = open("morse/samples_weighted.txt", "w")
 # random characters
 # char_space = ('abcdefghijklmnopqrstuvwxyz.,?/=1234567890 ')
 # TODO - figure out how to generate /? in filename for windows
-# char_space = ('abcdefghijklmnopqrstuvwxyz.,=1234567890 ')
-char_space = (
-    "a" * 63
-    + "b" * 11
-    + "c" * 22
-    + "d" * 33
-    + "e" * 98
-    + "f" * 17
-    + "g" * 16
-    + "h" * 47
-    + "i" * 54
-    + "j" * 1
-    + "k" * 6
-    + "l" * 31
-    + "m" * 19
-    + "n" * 52
-    + "o" * 58
-    + "p" * 15
-    + "q" * 1
-    + "r" * 46
-    + "s" * 49
-    + "t" * 70
-    + "u" * 21
-    + "v" * 8
-    + "w" * 18
-    + "x" * 1
-    + "y" * 15
-    + "z" * 1
-    + "." * 9
-    + "," * 7
-    + "=" * 10
-    + "1" * 3
-    + "2" * 3
-    + "3" * 3
-    + "4" * 3
-    + "5" * 3
-    + "6" * 3
-    + "7" * 3
-    + "8" * 3
-    + "9" * 3
-    + "0" * 3
-    + " " * 172
-)
+char_space = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q',
+              'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', ' ', '.', ',', '=', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',  # 'AR'
+              ]
+char_weights = (.06314691, .01153608, 0.021510309, 0.032884021, 0.09821134, 0.017226804, 0.015579897, 0.047118557,  # abcdefgh
+                0.053860825, 0.00118299, 0.005969072, 0.031121134, 0.018603093, 0.05218299, 0.058043814, 0.014914948,   # ijklmnop
+                0.000734536, 0.046291237, 0.048920103, 0.070020619, 0.021324742, 0.007561856, 0.018247423, 0.001159794,  # qrstuvwx
+                0.015262887, 0.000572165, 0.171821306, 0.008591065, 0.006872852, 0.008083333,  # 0.003436426, 0.000515464, # ? and /, z .,=
+                0.002749141, 0.002749141, 0.002749141, 0.002749141, 0.002749141, 0.002749141, 0.002749141, 0.002749141, # 12345678
+                0.002749141, 0.002749141) # 90
 print(char_space)
-# TODO - more accurately weighted characters
 for _ in range(27000):
-    # word = ( ''.join(random.choice(string.ascii_lowercase)
-    # + random.choice(string.digits)
-    # + random.choice((' ','','','',''))
-    # for i in range (3)) ) + '\n'
-    word = (
-        "".join(random.choice(char_space) for i in range(random.randint(4, 7)))
-    ) + "\n"
-    print(word)
+    word = "".join(random.choices(char_space, char_weights, k=random.randint(4, 7))) + '\n'
+    # prevent beginning or ending with space
+    while (word[0] == ' '):
+        replace = random.choices(char_space, char_weights)
+        word = replace[0] + word[1:]
+    while (word[-1] == ' '):
+        replace = random.choices(char_space, char_weights)
+        word = word[:-3] + replace[0]  # + "\n"
+    # print(word)
     file.write(word)
 file.close

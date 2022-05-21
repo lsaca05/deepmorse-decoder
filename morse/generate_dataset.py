@@ -67,7 +67,7 @@ def generate_dataset(config):
                 8000,
                 speed[0],
                 length_seconds,
-                8,
+                4,
                 False,
             ).all():
                 print(audio_file, phrase + str(" TOO LONG, didn't write"))
