@@ -25,7 +25,7 @@ jobs:
           pip install custom_py_libs/PyAudio-0.2.11-cp39-cp39-win_amd64.whl
       - name: Test with pytest
         run: |
-          pytest
+          python -m pytest
       - name: Generate data
         run: |
           python main.py --generate
