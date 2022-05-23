@@ -6,7 +6,7 @@ model:
   batchSize: 100
   imgSize: !!python/tuple [128, 32]  # Reduce height if possible?
   maxTextLen: 32
-  earlyStopping: 10
+  earlyStopping: 5
   corpus: "arrl_corpus.txt"
   split: 0.70  # 70% training - 30% validation
   numTrainSamplesPerEpoch: 5000
@@ -14,7 +14,7 @@ model:
 morse:
   fnTrain: "Volumes/Elements/model-arrl7/morsewords.txt"
   fnAudio: "Volumes/Elements/model-arrl7/"
-  count: 10000
+  count: 2000
   SNR_dB:
     - 40
     - 30

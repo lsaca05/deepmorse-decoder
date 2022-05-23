@@ -226,8 +226,7 @@ def morse(
         # write(file_name, Fs, morsecode)
         write(file_name, Fs, morsecode.astype(np.int16))
     if play_sound:
-        # TODO - Is this necessary? No include anywhere for "sd"
+        # deprecated
         # sd.play(morsecode, Fs)
         pass
-    print(morsecode)
     return morsecode
