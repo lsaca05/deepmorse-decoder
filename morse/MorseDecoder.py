@@ -26,18 +26,18 @@ import cv2
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 import tensorflow as tf
-from batch import Batch
-from config import Config
-from decoderType import DecoderType
-from filePaths import FilePaths
-from generate_dataset import generate_dataset
-from image import create_image
-from model import Model
-from morseDataset import MorseDataset
+from morse.batch import Batch
+from morse.config import Config
+from morse.decoderType import DecoderType
+from morse.filePaths import FilePaths
+from morse.generate_dataset import generate_dataset
+from morse.image import create_image
+from morse.model import Model
+from morse.morseDataset import MorseDataset
 
 # Read WAV file containing Morse code and create 256x1 (or 16x16) tiles (256 samples/4 seconds)
-from train import train
-from validate import validate
+from morse.train import train
+from morse.validate import validate
 
 # Read morse.wav from start_time=0 duration=4 seconds
 # save demodulated/decimated signal (1,256) to morse.npy

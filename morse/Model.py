@@ -2,7 +2,7 @@ import sys
 
 import numpy as np
 import tensorflow as tf
-from decoderType import DecoderType
+from morse.decoderType import DecoderType
 
 
 class Model:

@@ -28,7 +28,7 @@ jobs:
           pytest
       - name: Generate data
         run: |
-          python morse/MorseDecoder.py --generate
+          python main.py --generate
       - name: Train neural network
         run: |
-          python morse/MorseDecoder.py --train
+          python main.py --train

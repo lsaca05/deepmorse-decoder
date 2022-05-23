@@ -1,7 +1,7 @@
 import datetime
 
-from filePaths import FilePaths
-from validate import validate
+from morse.filePaths import FilePaths
+from morse.validate import validate
 
 
 def train(model, loader):
