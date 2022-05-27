@@ -1,8 +1,8 @@
 import cv2
 
 # import pyaudio
-from morse.find_peak import find_peak
-from morse.process_audio_file import process_audio_file
+from Morse.find_peak import find_peak
+from Morse.process_audio_file import process_audio_file
 
 # from scipy.io import wavfile
 

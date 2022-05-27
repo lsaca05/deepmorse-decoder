@@ -1,12 +1,12 @@
 import random
 
 import numpy as np
-from morse.morseCode import MorseCode
+from Morse.morseCode import MorseCode
 from scipy.io.wavfile import write
 # import sounddevice as sd
 
 
-def morse(
+def Morse(
     text,
     file_name=None,
     SNR_dB=20,

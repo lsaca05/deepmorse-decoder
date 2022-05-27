@@ -1,3 +1,3 @@
-import morse.MorseDecoder
+import Morse.MorseDecoder
 
-morse.MorseDecoder.main()
+Morse.MorseDecoder.main()

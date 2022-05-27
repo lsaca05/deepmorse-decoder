@@ -1,9 +1,9 @@
 import os
 import random
 
-from morse.batch import Batch
-from morse.image import create_image
-from morse.sample import Sample
+from Morse.batch import Batch
+from Morse.image import create_image
+from Morse.sample import Sample
 
 
 class MorseDataset:
