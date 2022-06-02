@@ -14,7 +14,7 @@ model:
 morse:
   fnTrain: "Volumes/Elements/model-arrl7/morsewords.txt"
   fnAudio: "Volumes/Elements/model-arrl7/"
-  count: 2000
+  count: 1000
   SNR_dB:
     - 40
     - 30
