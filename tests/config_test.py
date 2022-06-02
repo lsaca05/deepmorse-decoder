@@ -1,4 +1,4 @@
-from morse.config import Config
+from Morse.config import Config
 
 
 def test_config():

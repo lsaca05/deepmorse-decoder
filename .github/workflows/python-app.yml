@@ -1,5 +1,5 @@
 ---
-name: Unit tests
+name: Runtime test
 
 on: [push, pull_request]
 
