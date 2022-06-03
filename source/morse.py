@@ -1,7 +1,7 @@
 import random
 
 import numpy as np
-from Morse.morseCode import MorseCode
+from source.morseCode import MorseCode
 from scipy.io.wavfile import write
 # import sounddevice as sd
 

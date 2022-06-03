@@ -18,13 +18,13 @@ from matplotlib.mlab import specgram
 from matplotlib.widgets import TextBox
 
 import mic_read
-from Morse.batch import Batch
+from source.batch import Batch
 
 # from MorseDecoder import Batch, Config, DecoderType, Model
 # import MorseDecoder
-from Morse.config import Config
-from Morse.decoderType import DecoderType
-from Morse.model import Model
+from source.config import Config
+from source.decoderType import DecoderType
+from source.model import Model
 
 # Constants
 SAMPLES_PER_FRAME = 4  # Number of mic reads concatenated within a single window

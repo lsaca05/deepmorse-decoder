@@ -1,3 +1,7 @@
-import Morse.MorseDecoder
+# add code to check directory
+# ls
 
-Morse.MorseDecoder.main()
+import source.MorseDecoder
+
+source.MorseDecoder.main()
+

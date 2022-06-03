@@ -6,7 +6,7 @@ import random
 import re
 import uuid
 
-from Morse.morse import Morse
+from source.morse import Morse
 
 
 def generate_dataset(config):
