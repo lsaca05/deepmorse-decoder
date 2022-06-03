@@ -19,13 +19,13 @@ git clone https://github.com/ag1le/deepmorse-decoder.git
 cd deepmorse-decoder
 python3 -m venv venv
 source venv/bin/activate
-pip install -r  requirements.txt
+pip install -r requirements.txt
 ```
 
 ## Start the program
 
 ```bash
-python  specgram.py
+python specgram.py
 ````
 
 You should see the program starting and a spectrogram display should pop up.
