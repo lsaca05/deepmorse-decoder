@@ -7,12 +7,11 @@ spectrogram visualization tool
 
 Dependencies: pyaudio, numpy and matplotlib
 """
-############### Import Libraries ###############
-import pyaudio
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+import pyaudio
 
-############### Constants ###############
+# Constants
 # RATE = 44100 #sample rate
 RATE = 8000
 FORMAT = pyaudio.paInt16  # conversion format for PyAudio stream
@@ -20,12 +19,12 @@ CHANNELS = 1  # microphone audio channels
 CHUNK_SIZE = 8192  # number of samples to take per read
 SAMPLE_LENGTH = int(CHUNK_SIZE * 1000 / RATE)  # length of each sample in ms
 
-############### Functions ###############
+# Functions
 """
 open_mic:
 creates a PyAudio object and initializes the mic stream
 inputs: none
-ouputs: stream, PyAudio object
+outputs: stream, PyAudio object
 """
 
 
@@ -55,7 +54,7 @@ def get_data(stream, pa):
     return data
 
 
-############### Test Functions ###############
+# Test Functions
 """
 make_10k:
 creates a 10kHz test tone

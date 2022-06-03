@@ -5,30 +5,35 @@ Real time Morse decoder using CNN-LSTM-CTC Tensorflow model
 adapted from https://github.com/ayared/Live-Specgram
 
 """
-############### Import Libraries ###############
-from matplotlib.mlab import specgram
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
-import numpy as np
+# Import Modules
+# import sys
 import cv2
-import sys 
-from matplotlib.widgets import TextBox
+import matplotlib.animation as animation
+import matplotlib.pyplot as plt
+import numpy as np
 from fuzzysearch import find_near_matches
 
+# Import Libraries
+from matplotlib.mlab import specgram
+from matplotlib.widgets import TextBox
 
-############### Import Modules ###############
 import mic_read
-from morse.MorseDecoder import Config, Model, Batch, DecoderType
+from source.batch import Batch
 
+# from MorseDecoder import Batch, Config, DecoderType, Model
+# import MorseDecoder
+from source.config import Config
+from source.decoderType import DecoderType
+from source.model import Model
 
-############### Constants ###############
+# Constants
 SAMPLES_PER_FRAME = 4  # Number of mic reads concatenated within a single window
 nfft = 256  # NFFT value for spectrogram
 overlap = nfft - 56  # overlap value for spectrogram
 rate = mic_read.RATE  # sampling rate
 
 
-############### Call Morse decoder ###############
+# Call Morse decoder
 def infer_image(model, img):
     if img.shape == (128, 32):
         try:
@@ -39,13 +44,10 @@ def infer_image(model, img):
             print(f"ERROR:{err}")
     else:
         print(f"ERROR: img shape:{img.shape}")
-    return '', '', 0.0
+    return "", "", 0.0
 
 
-
-
-
-############### Functions ###############
+# Functions
 """
 get_sample:
 gets the audio data from the microphone
@@ -80,15 +82,15 @@ def get_specgram(signal, rate):
     return arr2D, freqs, bins
 
 
-class TextBuffer():
-    """Buffer to display decoded text """
+class TextBuffer:
+    """Buffer to display decoded text"""
 
     def __init__(self, length):
-        self.buffer = '*'*length
+        self.buffer = "*" * length
         self.length = length
 
     def update_text(self, string):
-        """ scrolling text buffer with matching logic"""
+        """scrolling text buffer with matching logic"""
         try:
             matches = find_near_matches(string, self.buffer, max_l_dist=3)
         except:
@@ -98,15 +100,20 @@ class TextBuffer():
             print(f"{self.buffer}")
             for match in matches:
                 print(f"{' ': <{match.start}}{match.matched}")
-            if match.start + len(match.matched) < self.length:  # match found but not at the end, just append
-                mybuf = self.buffer[len(string):self.length] + string
-            else:                                               # math found - append string and scroll 
-                mybuf = self.buffer[len(string)-len(match.matched):match.start] + string
-        
-        else:                                                   # no match, just append the string 
-            mybuf = self.buffer[len(string):self.length] + string
-        self.buffer = mybuf[0:self.length]
+            if (
+                match.start + len(match.matched) < self.length
+            ):  # match found but not at the end, just append
+                mybuf = self.buffer[len(string) : self.length] + string
+            else:  # math found - append string and scroll
+                mybuf = (
+                    self.buffer[len(string) - len(match.matched) : match.start] + string
+                )
+
+        else:  # no match, just append the string
+            mybuf = self.buffer[len(string) : self.length] + string
+        self.buffer = mybuf[0 : self.length]
         return self.buffer
+
 
 global buffer
 buffer = TextBuffer(40)
@@ -116,10 +123,12 @@ buffer = TextBuffer(40)
 update_fig:
 updates the image, just adds on samples at the start until the maximum size is
 reached, at which point it 'scrolls' horizontally by determining how much of the
-data needs to stay, shifting it left, and appending the new data. 
+data needs to stay, shifting it left, and appending the new data.
 inputs: iteration number
 outputs: updated image
 """
+
+
 def update_fig(n, text_box):
 
     data = get_sample(stream, pa)
@@ -152,37 +161,36 @@ def update_fig(n, text_box):
             m = m[0][0]
             s = s[0][0]
             img = img - m
-            img = img / s if s>0 else img
+            img = img / s if s > 0 else img
 
             img = cv2.transpose(img)
             img, recognized, probability = infer_image(model, img)
             if probability > 0.0000001:
-                # Output decoded text 
+                # Output decoded text
                 txt = buffer.update_text(f"{str(recognized[0][1:-1])}")
                 text_box.set_val(txt)
                 print(f"f:{f} n:{n} {txt}")
-    return  im, text_box, 
-
+    return (
+        im,
+        text_box,
+    )
 
 
 def main():
-
 
     global im
     global stream
     global pa
     global model
     global fig
-    ############### Initialize Plot ###############
-    
-
+    # Initialize Plot
 
     # Load the TensorFlow model
-    config = Config("model_arrl4.yaml")
+    config = Config("model_arrl7.yaml")
     model = Model(
         open(config.value("experiment.fnCharList")).read(),
         config,
-        decoderType=DecoderType.BeamSearch, #,DecoderType.BestPath
+        decoderType=DecoderType.BeamSearch,  # ,DecoderType.BestPath
         mustRestore=True,
     )
 
@@ -192,11 +200,11 @@ def main():
     stream, pa = mic_read.open_mic()
     data = get_sample(stream, pa)
     arr2D, freqs, bins = get_specgram(data, rate)
-  
+
     """
     Setup the spectrogram plot and textbox for the decoder
     """
-    fig, (axbox,ax) = plt.subplots(2,1)
+    fig, (axbox, ax) = plt.subplots(2, 1)
     text_box = TextBox(axbox, "Morse:")
     extent = (bins[0], bins[-1] * SAMPLES_PER_FRAME, freqs[-1], freqs[0])
 
@@ -210,26 +218,26 @@ def main():
     )
     plt.xlabel("Time (s)")
     plt.ylabel("Frequency (Hz)")
-    plt.title("Real Time Spectogram")
+    plt.title("Real Time Spectrogram")
     plt.gca().invert_yaxis()
     # plt.colorbar() #enable if you want to display a color bar
 
-    ############### Animate ###############
+    # Animate
+    # Variable is required here
     anim = animation.FuncAnimation(
-        fig, update_fig,  
-        blit=False, 
+        fig,
+        update_fig,
+        blit=False,
         interval=mic_read.CHUNK_SIZE / 1000,
-        fargs=(text_box,)
+        fargs=(text_box,),
     )
-
-
 
     try:
         plt.show()
     except:
         print("Plot Closed")
 
-    ############### Terminate ###############
+    # Terminate
     stream.stop_stream()
     stream.close()
     pa.terminate()

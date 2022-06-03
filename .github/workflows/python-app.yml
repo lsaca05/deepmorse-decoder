@@ -1,0 +1,36 @@
+---
+name: Runtime test
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    # Running on windows for unofficial PyAudio patch
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.9.6
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.9.6"
+      - name: Check directories
+        run: |
+          pwd
+          Get-ChildItem
+          cd ..
+          Get-ChildItem
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          # sudo apt-get install portaudio19-dev python-pyaudio
+          # if (-f requirements.txt); then pip install -r requirements.txt; fi
+          python -m pip install -r requirements.txt
+          # https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio
+          python -m pip install custom_py_libs/PyAudio-0.2.11-cp39-cp39-win_amd64.whl
+      - name: Generate data
+        run: |
+          python main.py --generate
+      - name: Train neural network
+        run: |
+          python main.py --train
