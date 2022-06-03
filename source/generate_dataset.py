@@ -22,7 +22,7 @@ def generate_dataset(config):
     print("SNR_DB:{}".format(SNR_DB))
     file = open("source/samples_weighted.txt").read()
 
-    with open(fnTrain, "w") as mf:
+    with open(fnTrain, "w+") as mf:
         # print(rv)
         # words = rv.text.split("\n")
         # words = rv.split("\n")
