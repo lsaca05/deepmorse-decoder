@@ -20,7 +20,7 @@ def generate_dataset(config):
     word_max_length = config.value("morse.word_max_length")
     words_in_sample = config.value("morse.words_in_sample")
     print("SNR_DB:{}".format(SNR_DB))
-    file = open("morse/samples_weighted.txt").read()
+    file = open("source/samples_weighted.txt").read()
 
     with open(fnTrain, "w") as mf:
         # print(rv)

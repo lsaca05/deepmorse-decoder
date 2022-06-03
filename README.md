@@ -37,9 +37,9 @@ Format: ![Alt Text](url)
 
 ## The CNN-LSTM-CTC model
 The model files are stored in the model-arrl#/ directory.
-You can create or retrain the model using the MorseDecoder.py in the morse/ directory.
+You can create or retrain the model using the MorseDecoder.py in the source/ directory.
 For instructions you can use the --help option.
 
 ```bash
-python morse/MorseDecoder.py -h 
+python source/MorseDecoder.py -h 
 ```

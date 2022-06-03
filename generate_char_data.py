@@ -1,6 +1,6 @@
 import random
 
-file = open("morse/samples_chars.txt", "w")
+file = open("source/samples_chars.txt", "w")
 # random characters
 # char_space = ('abcdefghijklmnopqrstuvwxyz.,?/=1234567890 ')
 # TODO - figure out how to generate /? in filename for windows
